@@ -10,6 +10,7 @@ LD39.renderCurrentScreen = function() {
   if (LD39.currentScreen == null) {
     return;
   }
+
   LD39.currentScreen.render(LD39.renderer);
 }
 
@@ -49,6 +50,8 @@ LD39.loadResources = function() {
 
   PIXI.loader
     .add('graphics/pacman', 'resources/graphics/pacman.png')
+    .add('sounds/bump_b', 'resources/sounds/bump_b.wav')
+    .add('sounds/bump_c', 'resources/sounds/bump_c.wav')
     .add('music/main', 'resources/music/the_jaunt.mp3')
     .load(LD39.loadingCompleted);
 
@@ -56,6 +59,8 @@ LD39.loadResources = function() {
 }
 
 LD39.initializeGame = function() {
+  LD39.bump = new Bump(PIXI);
+
   LD39.stage = new PIXI.Container();
 
   //Create a container object called the `stage`
