@@ -3,6 +3,8 @@ var LD39 = LD39 || {};
 LD39.PacmanEntity = function() {
   LD39.Entity.call(this);
 
+  this.previousX = 0;
+  this.previousY = 0;
   var texture = PIXI.loader.resources["graphics/pacman"].texture;
 
   var pacmanFrameTextures = [];
@@ -12,10 +14,8 @@ LD39.PacmanEntity = function() {
   }
 
   var pacmanSprite = new PIXI.extras.AnimatedSprite(pacmanFrameTextures);
-
-  this.sprite = pacmanSprite;
-  this.sprite.animationSpeed = 0.1;
-  this.sprite.anchor.set(0.5, 0.5);
+  pacmanSprite.animationSpeed = 0.1;
+  this.setSprite(pacmanSprite);
 
   this.movementTimer = 0;
   this.movementAlternator = true;
@@ -29,6 +29,31 @@ LD39.PacmanEntity.prototype.update = function(delta) {
   LD39.Entity.prototype.update.call(this, delta);
   this.interpretMovement(delta);
 }
+
+LD39.PacmanEntity.prototype.setPosition = function(x, y) {
+  var position = this.getPosition();
+  this.previousX = position.x;
+  this.previousY = position.y;
+
+  LD39.Entity.prototype.setPosition.call(this, x, y);
+}
+
+LD39.PacmanEntity.prototype.revertToLastPosition = function() {
+  this.setPosition(this.previousX, this.previousY);
+}
+
+LD39.PacmanEntity.prototype.collidedWithObstacle = function(obstacle) {
+  LD39.Entity.prototype.collidedWithObstacle.call(this, obstacle);
+
+  this.revertToLastPosition();
+}
+
+LD39.PacmanEntity.prototype.collidedWithEntity = function(entity) {
+  LD39.Entity.prototype.collidedWithEntity.call(this, entity);
+
+  this.world.removeEntity(entity);
+}
+
 
 LD39.PacmanEntity.prototype.interpretMovement = function(delta) {
   var moving = false;

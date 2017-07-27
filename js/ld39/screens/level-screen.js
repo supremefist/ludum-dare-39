@@ -5,6 +5,43 @@ LD39.LevelScreen = function() {
 
   // this.musicResource = "music/main";
 
+  this.createLevel();
+  this.createEntities();
+}
+
+LD39.LevelScreen.prototype = Object.create(LD39.Screen.prototype);
+LD39.LevelScreen.prototype.constructor = LD39.LevelScreen;
+
+LD39.LevelScreen.prototype.createLevel = function() {
+  var gridHeight = 18;
+  var gridWidth = 25;
+
+  for (var x = 0; x < gridWidth; x++) {
+    var brickEntity = new LD39.BrickEntity();
+    brickEntity.setPosition(16 + x * 32, 16);
+    this.world.addEntity(brickEntity);
+  }
+
+  for (var x = 0; x < gridWidth; x++) {
+    var brickEntity = new LD39.BrickEntity();
+    brickEntity.setPosition(16 + x * 32, 32 * (gridHeight - 1) + 16);
+    this.world.addEntity(brickEntity);
+  }
+
+  for (var y = 1; y < gridHeight - 1; y++) {
+    var brickEntity = new LD39.BrickEntity();
+    brickEntity.setPosition(16, 16 + 32 * y);
+    this.world.addEntity(brickEntity);
+  }
+
+  for (var y = 1; y < gridHeight - 1; y++) {
+    var brickEntity = new LD39.BrickEntity();
+    brickEntity.setPosition(16 + (gridWidth - 1) * 32, 16 + 32 * y);
+    this.world.addEntity(brickEntity);
+  }
+}
+
+LD39.LevelScreen.prototype.createEntities = function() {
   var pacmanEntity = new LD39.PacmanEntity();
   pacmanEntity.setPosition(300, 300);
   this.world.addEntity(pacmanEntity);
@@ -14,9 +51,6 @@ LD39.LevelScreen = function() {
   ghostEntity.setPosition(500, 300);
   this.world.addEntity(ghostEntity);
 }
-
-LD39.LevelScreen.prototype = Object.create(LD39.Screen.prototype);
-LD39.LevelScreen.prototype.constructor = LD39.LevelScreen;
 
 LD39.LevelScreen.prototype.update = function(delta) {
   LD39.Screen.prototype.update.call(this, delta);
@@ -79,7 +113,7 @@ LD39.LevelScreen.prototype.keyboard = function(keyCode) {
       key.isDown = true;
       key.isUp = false;
     }
-    // event.preventDefault();
+    event.preventDefault();
   };
 
   //The `upHandler`
@@ -89,7 +123,7 @@ LD39.LevelScreen.prototype.keyboard = function(keyCode) {
       key.isDown = false;
       key.isUp = true;
     }
-    // event.preventDefault();
+    event.preventDefault();
   };
 
   //Attach event listeners

@@ -5,10 +5,11 @@ LD39.GhostEntity = function() {
 
   var texture = PIXI.loader.resources["graphics/pacman"].texture;
   var ghostTexture = new PIXI.Texture(
-    texture, new PIXI.Rectangle(1, 1, 32, 32));
+    texture, new PIXI.Rectangle(1, 35, 32, 32));
   var ghostSprite = new PIXI.Sprite(ghostTexture);
 
-  this.sprite = ghostSprite;
+  // console.log(LD39.renderer.extract.pixels(ghostSprite));
+  this.setSprite(ghostSprite);
 }
 
 LD39.GhostEntity.prototype = Object.create(LD39.Entity.prototype);
