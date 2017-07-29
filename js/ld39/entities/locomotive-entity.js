@@ -71,11 +71,17 @@ LD39.LocomotiveEntity.prototype.setPhysicsPosition = function(x, y) {
 }
 
 LD39.LocomotiveEntity.prototype.setThrottle = function(throttleValue) {
-  if (throttleValue > 0.5) {
-    this.physicsBody.bodies[1].torque = 0.01;
-  } else {
-    this.physicsBody.bodies[1].torque = 0;
+  var throttleMultiplier = 0.02;
+  var idleValue = 0.3;
+
+  var finalTorque = 0;
+  if (throttleValue > idleValue) {
+    finalTorque = throttleMultiplier * (throttleValue - idleValue);
+  } else if (throttleValue < idleValue) {
+    finalTorque = throttleMultiplier * (throttleValue - idleValue);
   }
+
+  this.physicsBody.bodies[1].torque = finalTorque;
 }
 
 LD39.LocomotiveEntity.prototype.setPosition = function(x, y) {
@@ -84,4 +90,18 @@ LD39.LocomotiveEntity.prototype.setPosition = function(x, y) {
   // Matter.Body.setPosition(this.physicsBody, new PIXI.Point(x, y));
   // this.physicsBody.state.pos.x = x;
   // this.physicsBody.y = y;
+}
+
+LD39.LocomotiveEntity.prototype.setStatic = function(isStatic) {
+  for (var index = 0; index < this.physicsBody.bodies.length; index++) {
+    if (isStatic) {
+      Matter.Body.setInertia(this.physicsBody.bodies[index], Infinity);
+    } else {
+      Matter.Body.setInertia(this.physicsBody.bodies[index], 550);
+    }
+
+    // console.log(this.physicsBody.bodies[index].inertia);
+
+    // Matter.Body.setStatic(this.physicsBody.bodies[index], isStatic);
+  }
 }

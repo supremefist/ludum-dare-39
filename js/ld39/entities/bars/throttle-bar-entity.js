@@ -8,9 +8,9 @@ LD39.ThrottleBarEntity = function() {
   var barSprite = new PIXI.Container();
 
   var barHeights = [30, 30, 30, 30, 30];
-  var barRedness = [0.8, 0.7, 0.6, 0.5, 0.4];
-  var barGreenness = [0.5, 0.5, 0.5, 0.5, 0.4];
-  var barBlueness = [0.5, 0.5, 0.5, 0.5, 0.4];
+  var barRedness = [0.8, 0.8, 0.8, 0.5, 0.4];
+  var barGreenness = [0.3, 0.4, 0.5, 0.5, 0.4];
+  var barBlueness = [0.3, 0.4, 0.5, 0.5, 0.4];
 
   var currentY = 0;
   for (index = 0; index < barHeights.length; index++) {
