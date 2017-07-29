@@ -18,11 +18,9 @@ LD39.TrainRideScreen.prototype.createLevel = function() {
 }
 
 LD39.TrainRideScreen.prototype.render = function(renderer) {
-  renderer.backgroundColor = 0xcbdbfc;
+  this.level.updateCamera();
 
-  var locomotivePosition = this.level.locomotiveEntity.getPosition();
-  this.stage.x = -locomotivePosition.x + 120;
-  this.stage.y = -locomotivePosition.y + 300;
+  renderer.backgroundColor = 0xcbdbfc;
   renderer.render(this.stage);
 }
 
