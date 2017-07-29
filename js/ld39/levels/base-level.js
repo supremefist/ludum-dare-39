@@ -2,8 +2,12 @@ var LD39 = LD39 || {};
 
 LD39.BaseLevel = function(stage) {
   this.stage = stage;
+  this.interfaceStage = new PIXI.Container();
   this.track = null;
   this.locomotiveEntity = null;
+
+  this.throttleBarEntity = null;
+
   this.physicsEngine = null;
   this.trackGrounds = [];
 
@@ -11,6 +15,7 @@ LD39.BaseLevel = function(stage) {
   this.createPhysicsWorld();
   this.createVisibleWorld();
   this.createEntities();
+  this.createInterface();
 }
 
 LD39.BaseLevel.prototype.update = function(delta) {
@@ -44,6 +49,16 @@ LD39.BaseLevel.prototype.createStation = function() {
   this.stage.addChild(stationSprite);
 }
 
+LD39.BaseLevel.prototype.updateCamera = function() {
+  var locomotivePosition = this.locomotiveEntity.getPosition();
+  this.stage.position.set(-locomotivePosition.x + 120, -locomotivePosition.y + 400);
+}
+
+LD39.BaseLevel.prototype.createInterface = function() {
+  this.throttleBarEntity = new LD39.ThrottleBarEntity();
+  this.throttleBarEntity.setPosition(50, 50);
+  this.interfaceStage.addChild(this.throttleBarEntity.sprite);
+}
 
 LD39.BaseLevel.prototype.createVisibleWorld = function() {
   this.createStation();
@@ -87,8 +102,8 @@ LD39.BaseLevel.prototype.createPhysicsWorld = function() {
 
 LD39.BaseLevel.prototype.createEntities = function() {
   this.locomotiveEntity = new LD39.LocomotiveEntity();
-  this.locomotiveEntity.setPosition(0, -100);
-  this.locomotiveEntity.setPhysicsPosition(0, -100);
+  this.locomotiveEntity.setPosition(0, -21);
+  this.locomotiveEntity.setPhysicsPosition(0, -21);
 
   Matter.World.add(this.physicsEngine.world, [this.locomotiveEntity.physicsBody]);
   this.stage.addChild(this.locomotiveEntity.sprite);

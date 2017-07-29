@@ -43,7 +43,6 @@ LD39.LocomotiveEntity.prototype.constructor = LD39.LocomotiveEntity;
 LD39.LocomotiveEntity.prototype.update = function(delta) {
   LD39.Entity.prototype.update.call(this, delta);
 
-  // console.log(this.physicsBody.position.y);
   // this.setPosition(this.physicsBody.position.x, this.physicsBody.position.y);
   // this.setRotation(this.physicsBody.angle);
 
