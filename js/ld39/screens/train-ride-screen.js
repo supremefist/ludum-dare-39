@@ -41,7 +41,7 @@ LD39.TrainRideScreen.prototype.update = function(delta) {
 
 LD39.TrainRideScreen.prototype.addGround = function(startPoint, endPoint) {
   var trackGround = new PIXI.Graphics();
-  var trainHeight = 400;
+  var trainHeight = 0;
 
   trackGround.beginFill(0x4b692f);
 

@@ -62,8 +62,8 @@ LD39.TrainTrack.prototype.getTrackPhysicsObjects = function(sprites) {
     var startPoint = Object.create(this.points[index - 1]);
     var endPoint = Object.create(this.points[index]);
 
-    startPoint.y = startPoint.y + 400;
-    endPoint.y = endPoint.y + 400;
+    startPoint.y = startPoint.y;
+    endPoint.y = endPoint.y;
 
     var height = 20;
     if (sprites) {

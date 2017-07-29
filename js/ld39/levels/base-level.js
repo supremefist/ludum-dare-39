@@ -31,8 +31,8 @@ LD39.BaseLevel.prototype.createPhysicsWorld = function() {
 
 LD39.BaseLevel.prototype.createEntities = function() {
   this.locomotiveEntity = new LD39.LocomotiveEntity();
-  this.locomotiveEntity.setPosition(100, 100);
-  this.locomotiveEntity.setPhysicsPosition(100, 100);
+  this.locomotiveEntity.setPosition(100, -100);
+  this.locomotiveEntity.setPhysicsPosition(100, -100);
 
   Matter.World.add(this.physicsEngine.world, [this.locomotiveEntity.physicsBody]);
   this.stage.addChild(this.locomotiveEntity.sprite);
