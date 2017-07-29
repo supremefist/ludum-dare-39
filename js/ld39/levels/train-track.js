@@ -31,10 +31,11 @@ LD39.TrainTrack.prototype.getTrackPhysicsSpriteForPoints = function(startPoint, 
   var rectangleSprite = new PIXI.Container();
   rectangleSprite.addChild(rectangleGraphics);
 
-  rectangleSprite.pivot.set(0.5, 0.5);
+  rectangleSprite.pivot.set(0.0, 0.5);
   rectangleSprite.rotation = rotation;
-  console.log(x + ", " + y);
+
   rectangleSprite.position.set(x, y);
+
   return rectangleSprite;
 }
 
@@ -57,24 +58,27 @@ LD39.TrainTrack.prototype.getTrackPhysicsBodyForPoints = function(startPoint, en
 
 LD39.TrainTrack.prototype.getTrackPhysicsObjects = function(sprites) {
   var pads = [];
-  console.log("A");
   for (var index = 1; index < this.points.length; index++) {
     var startPoint = Object.create(this.points[index - 1]);
     var endPoint = Object.create(this.points[index]);
 
-    console.log(startPoint);
-
     startPoint.y = startPoint.y + 400;
     endPoint.y = endPoint.y + 400;
-    console.log(startPoint);
 
     var height = 20;
     if (sprites) {
       var padPhysicsBody = this.getTrackPhysicsSpriteForPoints(startPoint, endPoint, height);
       pads.push(padPhysicsBody);
+      // var padPhysicsBody = this.getTrackPhysicsSpriteForPoints(startPoint, new PIXI.Point(endPoint.x, startPoint.y), height);
+      // pads.push(padPhysicsBody);
     } else {
+      startPoint.y += height / 2;
+      endPoint.y += height / 2;
+
       var padPhysicsBody = this.getTrackPhysicsBodyForPoints(startPoint, endPoint, height);
       pads.push(padPhysicsBody);
+      // var padPhysicsBody = this.getTrackPhysicsBodyForPoints(startPoint, new PIXI.Point(endPoint.x, startPoint.y), height);
+      // pads.push(padPhysicsBody);
     }
   }
 

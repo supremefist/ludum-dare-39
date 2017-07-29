@@ -39,7 +39,7 @@ LD39.TrainRideScreen.prototype.update = function(delta) {
     var startPoint = trackPoints[index - 1];
     var endPoint = trackPoints[index];
 
-    // this.addGround(startPoint, endPoint);
+    this.addGround(startPoint, endPoint);
   }
 }
 
