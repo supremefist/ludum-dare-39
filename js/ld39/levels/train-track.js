@@ -13,37 +13,40 @@ LD39.TrainTrack.prototype.getTrackPoints = function() {
   return this.points;
 }
 
-LD39.TrainTrack.prototype.getTrackPhysicsSpriteForPoints = function(startPoint, endPoint) {
+LD39.TrainTrack.prototype.getTrackPhysicsSpriteForPoints = function(startPoint, endPoint, height) {
   var padLength = Math.sqrt(Math.pow(startPoint.x - endPoint.x, 2) + Math.pow(startPoint.y - endPoint.y, 2));
 
   var x = startPoint.x;
-  var y = startPoint.y + 400;
+  var y = startPoint.y;
   var width = padLength;
-  var height = 20;
 
   var rotation = LD39.Utils.angleBetweenPoints(startPoint, endPoint);
 
-  var rectangleSprite = new PIXI.Graphics();
-  rectangleSprite.beginFill(0x66CCFF);
-  rectangleSprite.lineStyle(4, 0xFF3300, 1);
-  rectangleSprite.drawRect(x, y, width, height);
-  rectangleSprite.rotation = rotation;
-  rectangleSprite.endFill();
+  var rectangleGraphics = new PIXI.Graphics();
+  rectangleGraphics.beginFill(0x66CCFF);
+  rectangleGraphics.lineStyle(4, 0xFF3300, 1);
+  rectangleGraphics.drawRect(0, 0, width, height);
+  rectangleGraphics.endFill();
 
+  var rectangleSprite = new PIXI.Container();
+  rectangleSprite.addChild(rectangleGraphics);
+
+  rectangleSprite.pivot.set(0.5, 0.5);
+  rectangleSprite.rotation = rotation;
+  console.log(x + ", " + y);
+  rectangleSprite.position.set(x, y);
   return rectangleSprite;
 }
 
-LD39.TrainTrack.prototype.getTrackPhysicsBodyForPoints = function(startPoint, endPoint) {
+LD39.TrainTrack.prototype.getTrackPhysicsBodyForPoints = function(startPoint, endPoint, height) {
   var padLength = Math.sqrt(Math.pow(startPoint.x - endPoint.x, 2) + Math.pow(startPoint.y - endPoint.y, 2));
 
-  var height = 20;
-
   var x = (endPoint.x + startPoint.x) / 2;
-  var y = (endPoint.y + startPoint.y) / 2 + 400 + height / 2;
+  var y = (endPoint.y + startPoint.y) / 2;
   var width = padLength;
 
   var rotation = LD39.Utils.angleBetweenPoints(startPoint, endPoint);
-  
+
   var padPhysicsBody = Matter.Bodies.rectangle(x, y, width, height, {
      angle: rotation,
      isStatic: true
@@ -54,15 +57,23 @@ LD39.TrainTrack.prototype.getTrackPhysicsBodyForPoints = function(startPoint, en
 
 LD39.TrainTrack.prototype.getTrackPhysicsObjects = function(sprites) {
   var pads = [];
+  console.log("A");
   for (var index = 1; index < this.points.length; index++) {
-    var startPoint = this.points[index - 1];
-    var endPoint = this.points[index];
+    var startPoint = Object.create(this.points[index - 1]);
+    var endPoint = Object.create(this.points[index]);
 
+    console.log(startPoint);
+
+    startPoint.y = startPoint.y + 400;
+    endPoint.y = endPoint.y + 400;
+    console.log(startPoint);
+
+    var height = 20;
     if (sprites) {
-      var padPhysicsBody = this.getTrackPhysicsSpriteForPoints(startPoint, endPoint);
+      var padPhysicsBody = this.getTrackPhysicsSpriteForPoints(startPoint, endPoint, height);
       pads.push(padPhysicsBody);
     } else {
-      var padPhysicsBody = this.getTrackPhysicsBodyForPoints(startPoint, endPoint);
+      var padPhysicsBody = this.getTrackPhysicsBodyForPoints(startPoint, endPoint, height);
       pads.push(padPhysicsBody);
     }
   }
