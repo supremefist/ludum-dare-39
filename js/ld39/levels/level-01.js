@@ -12,6 +12,6 @@ LD39.Level01.prototype.createTrack = function() {
 
   this.track = new LD39.TrainTrack();
 
-  this.track.addTrackPoint(800, 100);
-  // this.track.addTrackPoint(1600, 0);
+  this.track.addTrackPoint(400, 100);
+  this.track.addTrackPoint(800, 50);
 }

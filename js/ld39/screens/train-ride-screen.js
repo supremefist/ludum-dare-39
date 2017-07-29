@@ -38,7 +38,6 @@ LD39.TrainRideScreen.prototype.update = function(delta) {
   for (var index = 1; index < trackPoints.length; index++) {
     var startPoint = trackPoints[index - 1];
     var endPoint = trackPoints[index];
-
     this.addGround(startPoint, endPoint);
   }
 }
@@ -49,11 +48,16 @@ LD39.TrainRideScreen.prototype.addGround = function(startPoint, endPoint) {
 
   trackGround.beginFill(0x4b692f);
 
+  var relativeStartX = 0;
+  var relativeStartY = 0;
+  var relativeEndX = endPoint.x - startPoint.x;
+  var relativeEndY = endPoint.y - startPoint.y;
+
   var drawPoints = [
-    0, 0,
-    endPoint.x, endPoint.y,
-    endPoint.x, 600,
-    0, 600
+    relativeStartX, relativeStartY,
+    relativeEndX, relativeEndY,
+    relativeEndX, 600,
+    relativeStartX, 600
   ];
 
   trackGround.drawPolygon(drawPoints);

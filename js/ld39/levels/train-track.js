@@ -24,7 +24,7 @@ LD39.TrainTrack.prototype.getTrackPhysicsSpriteForPoints = function(startPoint, 
 
   var rectangleGraphics = new PIXI.Graphics();
   rectangleGraphics.beginFill(0x66CCFF);
-  rectangleGraphics.lineStyle(4, 0xFF3300, 1);
+  rectangleGraphics.lineStyle(4, 0x1a1a1a, 1);
   rectangleGraphics.drawRect(0, 0, width, height);
   rectangleGraphics.endFill();
 

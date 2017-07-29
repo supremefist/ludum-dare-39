@@ -25,7 +25,6 @@ LD39.BaseLevel.prototype.createPhysicsWorld = function() {
 
   var padSprites = this.track.getTrackPhysicsObjects(true);
   for (var index = 0; index < padSprites.length; index++) {
-    console.log(padSprites[index]);
     this.stage.addChild(padSprites[index]);
   }
 }
