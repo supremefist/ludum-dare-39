@@ -24,6 +24,8 @@ LD39.initializeRenderer = function() {
     type = "canvas"
   }
 
+  PIXI.scaleModes.DEFAULT = PIXI.scaleModes.NEAREST;
+
   //Create the renderer
   LD39.renderer = PIXI.autoDetectRenderer(800, 600, {
     antialias: false,
@@ -50,6 +52,7 @@ LD39.loadResources = function() {
 
   PIXI.loader
     .add('graphics/train', 'resources/graphics/train.png')
+    .add('graphics/buildings', 'resources/graphics/buildings.png')
     .add('sounds/bump_b', 'resources/sounds/bump_b.wav')
     .add('sounds/bump_c', 'resources/sounds/bump_c.wav')
     // .add('music/main', 'resources/music/the_jaunt.mp3')

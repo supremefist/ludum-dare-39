@@ -6,7 +6,6 @@ LD39.TrainRideScreen = function() {
   // this.musicResource = "music/main";
 
   this.level = null;
-  this.trackGrounds = [];
 
   this.createLevel();
 }
@@ -16,13 +15,6 @@ LD39.TrainRideScreen.prototype.constructor = LD39.TrainRideScreen;
 
 LD39.TrainRideScreen.prototype.createLevel = function() {
   this.level = new LD39.Level01(this.stage);
-
-  var trackPoints = this.level.track.getTrackPoints();
-  for (var index = 1; index < trackPoints.length; index++) {
-    var startPoint = trackPoints[index - 1];
-    var endPoint = trackPoints[index];
-    this.addGround(startPoint, endPoint);
-  }
 }
 
 LD39.TrainRideScreen.prototype.render = function(renderer) {
@@ -37,34 +29,6 @@ LD39.TrainRideScreen.prototype.render = function(renderer) {
 LD39.TrainRideScreen.prototype.update = function(delta) {
   LD39.Screen.prototype.update.call(this, delta);
   this.level.update(delta);
-}
-
-LD39.TrainRideScreen.prototype.addGround = function(startPoint, endPoint) {
-  var trackGround = new PIXI.Graphics();
-  var trainHeight = 0;
-
-  trackGround.beginFill(0x4b692f);
-
-  var relativeStartX = 0;
-  var relativeStartY = 0;
-  var relativeEndX = endPoint.x - startPoint.x;
-  var relativeEndY = endPoint.y - startPoint.y;
-
-  var drawPoints = [
-    relativeStartX, relativeStartY,
-    relativeEndX, relativeEndY,
-    relativeEndX, 600,
-    relativeStartX, 600
-  ];
-
-  trackGround.drawPolygon(drawPoints);
-
-  trackGround.endFill();
-
-  trackGround.x = startPoint.x;
-  trackGround.y = startPoint.y + trainHeight;
-  this.trackGrounds.push(trackGround);
-  this.stage.addChild(trackGround);
 }
 
 LD39.TrainRideScreen.prototype.initialize = function(delta) {
