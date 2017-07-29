@@ -3,8 +3,6 @@ var LD39 = LD39 || {};
 LD39.TrainRideScreen = function() {
   LD39.Screen.call(this);
 
-  this.locomotiveEntity = null;
-
   // this.musicResource = "music/main";
 
   this.level = null;
@@ -18,21 +16,6 @@ LD39.TrainRideScreen.prototype.constructor = LD39.TrainRideScreen;
 
 LD39.TrainRideScreen.prototype.createLevel = function() {
   this.level = new LD39.Level01(this.stage);
-}
-
-LD39.TrainRideScreen.prototype.render = function(renderer) {
-  LD39.Screen.prototype.render.call(this, renderer);
-  renderer.backgroundColor = 0xcbdbfc;
-  renderer.render(this.stage);
-}
-
-LD39.TrainRideScreen.prototype.update = function(delta) {
-  LD39.Screen.prototype.update.call(this, delta);
-  this.level.update(delta);
-
-  for (var index = 0; index < this.trackGrounds.length; index++) {
-    this.stage.removeChild(this.trackGrounds[index]);
-  }
 
   var trackPoints = this.level.track.getTrackPoints();
   for (var index = 1; index < trackPoints.length; index++) {
@@ -40,6 +23,20 @@ LD39.TrainRideScreen.prototype.update = function(delta) {
     var endPoint = trackPoints[index];
     this.addGround(startPoint, endPoint);
   }
+}
+
+LD39.TrainRideScreen.prototype.render = function(renderer) {
+  renderer.backgroundColor = 0xcbdbfc;
+
+  var locomotivePosition = this.level.locomotiveEntity.getPosition();
+  this.stage.x = -locomotivePosition.x + 120;
+  this.stage.y = -locomotivePosition.y + 300;
+  renderer.render(this.stage);
+}
+
+LD39.TrainRideScreen.prototype.update = function(delta) {
+  LD39.Screen.prototype.update.call(this, delta);
+  this.level.update(delta);
 }
 
 LD39.TrainRideScreen.prototype.addGround = function(startPoint, endPoint) {
