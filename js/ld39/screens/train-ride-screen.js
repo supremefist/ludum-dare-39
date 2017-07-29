@@ -15,6 +15,8 @@ LD39.TrainRideScreen.prototype.constructor = LD39.TrainRideScreen;
 
 LD39.TrainRideScreen.prototype.createLevel = function() {
   this.level = new LD39.Level01(this.stage);
+
+  this.initializeKeyboard();
 }
 
 LD39.TrainRideScreen.prototype.render = function(renderer) {
@@ -31,8 +33,6 @@ LD39.TrainRideScreen.prototype.update = function(delta) {
 
 LD39.TrainRideScreen.prototype.initialize = function(delta) {
   LD39.Screen.prototype.initialize.call(this, delta);
-
-  this.initializeKeyboard();
 }
 
 LD39.TrainRideScreen.prototype.initializeKeyboard = function() {
@@ -43,32 +43,20 @@ LD39.TrainRideScreen.prototype.initializeKeyboard = function() {
 
   var playerEntity = this.playerEntity;
   var coreSpeed = 25;
+  var level = this.level;
+
   up.press = function() {
-    playerEntity.setVelocityY(-coreSpeed);
+    level.upPress();
   };
   up.release = function() {
-    playerEntity.setVelocityY(0);
+    level.upRelease();
   }
 
   down.press = function() {
-    playerEntity.setVelocityY(coreSpeed);
+    level.downPress();
   };
   down.release = function() {
-    playerEntity.setVelocityY(0);
-  }
-
-  left.press = function() {
-    playerEntity.setVelocityX(-coreSpeed);
-  };
-  left.release = function() {
-    playerEntity.setVelocityX(0);
-  }
-
-  right.press = function() {
-    playerEntity.setVelocityX(coreSpeed);
-  };
-  right.release = function() {
-    playerEntity.setVelocityX(0);
+    level.downRelease();
   }
 }
 

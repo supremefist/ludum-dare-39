@@ -21,6 +21,7 @@ LD39.BaseLevel.prototype.update = function(delta) {
 
   this.locomotiveEntity.update(delta);
   this.throttleBarEntity.update(delta);
+  this.locomotiveEntity.setThrottle(this.throttleBarEntity.getProgress());
 }
 
 LD39.BaseLevel.prototype.createGround = function() {
@@ -124,5 +125,21 @@ LD39.BaseLevel.prototype.createEntities = function() {
 }
 
 LD39.BaseLevel.prototype.createTrack = function() {
+
+}
+
+LD39.BaseLevel.prototype.upPress = function() {
+  this.throttleBarEntity.changeProgress(0.2);
+}
+
+LD39.BaseLevel.prototype.upRelease = function() {
+
+}
+
+LD39.BaseLevel.prototype.downPress = function() {
+  this.throttleBarEntity.changeProgress(-0.2);
+}
+
+LD39.BaseLevel.prototype.downRelease = function() {
 
 }

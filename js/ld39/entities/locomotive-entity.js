@@ -70,6 +70,14 @@ LD39.LocomotiveEntity.prototype.setPhysicsPosition = function(x, y) {
   // this.physicsBody.y = y;
 }
 
+LD39.LocomotiveEntity.prototype.setThrottle = function(throttleValue) {
+  if (throttleValue > 0.5) {
+    this.physicsBody.bodies[1].torque = 0.01;
+  } else {
+    this.physicsBody.bodies[1].torque = 0;
+  }
+}
+
 LD39.LocomotiveEntity.prototype.setPosition = function(x, y) {
   LD39.Entity.prototype.setPosition.call(this, x, y);
 

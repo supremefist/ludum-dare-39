@@ -22,3 +22,13 @@ LD39.BarEntity.prototype.setProgress = function(progressValue) {
 LD39.BarEntity.prototype.getProgress = function() {
   return this.progressValue;
 }
+
+LD39.BarEntity.prototype.changeProgress = function(delta) {
+  if ((this.progressValue + delta > 1.0) || (this.progressValue + delta < 0.0)) {
+    return;
+  }
+
+  this.progressValue += delta;
+  this.progressValue = Math.min(1.0, this.progressValue);
+  this.progressValue = Math.max(0.0, this.progressValue);
+}
