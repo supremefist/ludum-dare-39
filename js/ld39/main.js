@@ -37,7 +37,7 @@ LD39.loadProgressHandler = function(loader, resource) {
 }
 
 LD39.loadingCompleted = function(loader, resources) {
-  LD39.setCurrentScreen(new LD39.LevelScreen());
+  LD39.setCurrentScreen(new LD39.TrainRideScreen());
 }
 
 LD39.loadResources = function() {
@@ -49,10 +49,10 @@ LD39.loadResources = function() {
   );
 
   PIXI.loader
-    .add('graphics/pacman', 'resources/graphics/pacman.png')
+    .add('graphics/train', 'resources/graphics/train.png')
     .add('sounds/bump_b', 'resources/sounds/bump_b.wav')
     .add('sounds/bump_c', 'resources/sounds/bump_c.wav')
-    .add('music/main', 'resources/music/the_jaunt.mp3')
+    // .add('music/main', 'resources/music/the_jaunt.mp3')
     .load(LD39.loadingCompleted);
 
   PIXI.loader.on("progress", LD39.loadProgressHandler);

@@ -1,16 +1,15 @@
 var LD39 = LD39 || {};
 
 LD39.Screen = function(world) {
-  this.world = world;
+  this.stage = new PIXI.Container();
   this.musicResource = null;
 }
 
 LD39.Screen.prototype.update = function(delta) {
-  this.world.update(delta);
 }
 
 LD39.Screen.prototype.render = function(renderer) {
-  this.world.render(renderer);
+  renderer.render(this.stage);
 }
 
 LD39.Screen.prototype.initialize = function() {

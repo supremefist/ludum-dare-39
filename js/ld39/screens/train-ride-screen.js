@@ -1,7 +1,9 @@
 var LD39 = LD39 || {};
 
-LD39.LevelScreen = function() {
-  LD39.Screen.call(this, new LD39.World());
+LD39.TrainRideScreen = function() {
+  LD39.Screen.call(this);
+
+  this.locomotiveEntity = null;
 
   // this.musicResource = "music/main";
 
@@ -9,67 +11,44 @@ LD39.LevelScreen = function() {
   this.createEntities();
 }
 
-LD39.LevelScreen.prototype = Object.create(LD39.Screen.prototype);
-LD39.LevelScreen.prototype.constructor = LD39.LevelScreen;
+LD39.TrainRideScreen.prototype = Object.create(LD39.Screen.prototype);
+LD39.TrainRideScreen.prototype.constructor = LD39.TrainRideScreen;
 
-LD39.LevelScreen.prototype.createLevel = function() {
-  var gridHeight = 18;
-  var gridWidth = 25;
+LD39.TrainRideScreen.prototype.createLevel = function() {
 
-  for (var x = 0; x < gridWidth; x++) {
-    var brickEntity = new LD39.BrickEntity();
-    brickEntity.setPosition(16 + x * 32, 16);
-    this.world.addEntity(brickEntity);
-  }
-
-  for (var x = 0; x < gridWidth; x++) {
-    var brickEntity = new LD39.BrickEntity();
-    brickEntity.setPosition(16 + x * 32, 32 * (gridHeight - 1) + 16);
-    this.world.addEntity(brickEntity);
-  }
-
-  for (var y = 1; y < gridHeight - 1; y++) {
-    var brickEntity = new LD39.BrickEntity();
-    brickEntity.setPosition(16, 16 + 32 * y);
-    this.world.addEntity(brickEntity);
-  }
-
-  for (var y = 1; y < gridHeight - 1; y++) {
-    var brickEntity = new LD39.BrickEntity();
-    brickEntity.setPosition(16 + (gridWidth - 1) * 32, 16 + 32 * y);
-    this.world.addEntity(brickEntity);
-  }
 }
 
-LD39.LevelScreen.prototype.createEntities = function() {
-  var pacmanEntity = new LD39.PacmanEntity();
-  pacmanEntity.setPosition(300, 300);
-  this.world.addEntity(pacmanEntity);
-  this.playerEntity = pacmanEntity;
-
-  var ghostEntity = new LD39.GhostEntity();
-  ghostEntity.setPosition(500, 300);
-  this.world.addEntity(ghostEntity);
+LD39.TrainRideScreen.prototype.render = function(renderer) {
+  LD39.Screen.prototype.render.call(this, renderer);
+  renderer.backgroundColor = 0xcbdbfc;
+  renderer.render(this.stage);
 }
 
-LD39.LevelScreen.prototype.update = function(delta) {
+LD39.TrainRideScreen.prototype.createEntities = function() {
+  this.locomotiveEntity = new LD39.LocomotiveEntity();
+  this.locomotiveEntity.setPosition(100, 300);
+
+  this.stage.addChild(this.locomotiveEntity.sprite);
+}
+
+LD39.TrainRideScreen.prototype.update = function(delta) {
   LD39.Screen.prototype.update.call(this, delta);
 }
 
-LD39.LevelScreen.prototype.initialize = function(delta) {
+LD39.TrainRideScreen.prototype.initialize = function(delta) {
   LD39.Screen.prototype.initialize.call(this, delta);
 
   this.initializeKeyboard();
 }
 
-LD39.LevelScreen.prototype.initializeKeyboard = function() {
+LD39.TrainRideScreen.prototype.initializeKeyboard = function() {
   var left = this.keyboard(37);
   var up = this.keyboard(38);
   var right = this.keyboard(39);
   var down = this.keyboard(40);
 
   var playerEntity = this.playerEntity;
-  var coreSpeed = 150;
+  var coreSpeed = 25;
   up.press = function() {
     playerEntity.setVelocityY(-coreSpeed);
   };
@@ -99,7 +78,7 @@ LD39.LevelScreen.prototype.initializeKeyboard = function() {
   }
 }
 
-LD39.LevelScreen.prototype.keyboard = function(keyCode) {
+LD39.TrainRideScreen.prototype.keyboard = function(keyCode) {
   var key = {};
   key.code = keyCode;
   key.isDown = false;

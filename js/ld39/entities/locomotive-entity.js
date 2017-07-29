@@ -1,36 +1,30 @@
 var LD39 = LD39 || {};
 
-LD39.PacmanEntity = function() {
+LD39.LocomotiveEntity = function() {
   LD39.Entity.call(this);
 
   this.previousX = 0;
   this.previousY = 0;
-  var texture = PIXI.loader.resources["graphics/pacman"].texture;
-
-  var pacmanFrameTextures = [];
-  for (var i = 0; i < 2; i++) {
-    pacmanFrameTextures.push(new PIXI.Texture(
-      texture, new PIXI.Rectangle(1 + i * 34, 1, 32, 32)));
-  }
-
-  var pacmanSprite = new PIXI.extras.AnimatedSprite(pacmanFrameTextures);
-  pacmanSprite.animationSpeed = 0.1;
-  this.setSprite(pacmanSprite);
+  var texture = PIXI.loader.resources["graphics/train"].texture;
+  var trainTexture = new PIXI.Texture(
+    texture, new PIXI.Rectangle(1, 1, 64, 32));
+  var trainSprite = new PIXI.Sprite(trainTexture);
+  this.setSprite(trainSprite);
 
   this.movementTimer = 0;
   this.movementAlternator = true;
   this.alreadyMoving = false;
 }
 
-LD39.PacmanEntity.prototype = Object.create(LD39.Entity.prototype);
-LD39.PacmanEntity.prototype.constructor = LD39.PacmanEntity;
+LD39.LocomotiveEntity.prototype = Object.create(LD39.Entity.prototype);
+LD39.LocomotiveEntity.prototype.constructor = LD39.LocomotiveEntity;
 
-LD39.PacmanEntity.prototype.update = function(delta) {
+LD39.LocomotiveEntity.prototype.update = function(delta) {
   LD39.Entity.prototype.update.call(this, delta);
   this.interpretMovement(delta);
 }
 
-LD39.PacmanEntity.prototype.setPosition = function(x, y) {
+LD39.LocomotiveEntity.prototype.setPosition = function(x, y) {
   var position = this.getPosition();
   this.previousX = position.x;
   this.previousY = position.y;
@@ -38,24 +32,24 @@ LD39.PacmanEntity.prototype.setPosition = function(x, y) {
   LD39.Entity.prototype.setPosition.call(this, x, y);
 }
 
-LD39.PacmanEntity.prototype.revertToLastPosition = function() {
-  this.setPosition(this.previousX, this.previousY);
+LD39.LocomotiveEntity.prototype.revertToLastPosition = function() {
+  this.setPosition(Math.round(this.previousX), Math.round(this.previousY));
 }
 
-LD39.PacmanEntity.prototype.collidedWithObstacle = function(obstacle) {
+LD39.LocomotiveEntity.prototype.collidedWithObstacle = function(obstacle) {
   LD39.Entity.prototype.collidedWithObstacle.call(this, obstacle);
 
   this.revertToLastPosition();
 }
 
-LD39.PacmanEntity.prototype.collidedWithEntity = function(entity) {
+LD39.LocomotiveEntity.prototype.collidedWithEntity = function(entity) {
   LD39.Entity.prototype.collidedWithEntity.call(this, entity);
 
   this.world.removeEntity(entity);
 }
 
 
-LD39.PacmanEntity.prototype.interpretMovement = function(delta) {
+LD39.LocomotiveEntity.prototype.interpretMovement = function(delta) {
   var moving = false;
   if (this.velocityX > 0) {
     this.sprite.scale.x = 1.0;

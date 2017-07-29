@@ -1,13 +1,13 @@
 var LD39 = LD39 || {};
 
 LD39.LoadingScreen = function() {
-  LD39.Screen.call(this, new LD39.World());
+  LD39.Screen.call(this);
 
   this.message = new LD39.TextEntity("Loading: 0%");
 
   this.message.setPosition(300, 250);
 
-  this.world.addEntity(this.message);
+  this.stage.addChild(this.message.sprite);
 }
 
 LD39.LoadingScreen.prototype = Object.create(LD39.Screen.prototype);
