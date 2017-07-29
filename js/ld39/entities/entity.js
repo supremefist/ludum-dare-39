@@ -17,22 +17,6 @@ LD39.Entity.getNextGuid = function() {
 }
 
 LD39.Entity.prototype.update = function(delta) {
-  this.move(delta);
-}
-
-LD39.Entity.prototype.move = function(delta) {
-  var position = this.getPosition();
-
-  this.setPosition(
-    position.x + this.getVelocityX() * (delta / 1000.0),
-    position.y + this.getVelocityY() * (delta / 1000.0));
-}
-
-LD39.Entity.prototype.collidedWithObstacle = function(obstacle) {
-
-}
-
-LD39.Entity.prototype.collidedWithEntity = function(entity) {
 
 }
 
@@ -42,7 +26,15 @@ LD39.Entity.prototype.setWorld = function(world) {
 
 LD39.Entity.prototype.setSprite = function(sprite) {
   this.sprite = sprite;
-  this.sprite.anchor.set(0.5, 0.5);
+  // this.sprite.anchor.set(0.5, 0.5);
+}
+
+LD39.Entity.prototype.getRotation = function() {
+  return this.sprite.rotation;
+}
+
+LD39.Entity.prototype.setRotation = function(rotation) {
+  this.sprite.rotation = rotation;
 }
 
 LD39.Entity.prototype.getPosition = function() {

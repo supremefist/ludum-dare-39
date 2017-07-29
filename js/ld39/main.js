@@ -59,8 +59,6 @@ LD39.loadResources = function() {
 }
 
 LD39.initializeGame = function() {
-  LD39.bump = new Bump(PIXI);
-
   LD39.stage = new PIXI.Container();
 
   //Create a container object called the `stage`

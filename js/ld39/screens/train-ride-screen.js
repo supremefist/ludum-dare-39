@@ -7,15 +7,17 @@ LD39.TrainRideScreen = function() {
 
   // this.musicResource = "music/main";
 
+  this.level = null;
+  this.trackGrounds = [];
+
   this.createLevel();
-  this.createEntities();
 }
 
 LD39.TrainRideScreen.prototype = Object.create(LD39.Screen.prototype);
 LD39.TrainRideScreen.prototype.constructor = LD39.TrainRideScreen;
 
 LD39.TrainRideScreen.prototype.createLevel = function() {
-
+  this.level = new LD39.Level01(this.stage);
 }
 
 LD39.TrainRideScreen.prototype.render = function(renderer) {
@@ -24,15 +26,44 @@ LD39.TrainRideScreen.prototype.render = function(renderer) {
   renderer.render(this.stage);
 }
 
-LD39.TrainRideScreen.prototype.createEntities = function() {
-  this.locomotiveEntity = new LD39.LocomotiveEntity();
-  this.locomotiveEntity.setPosition(100, 300);
-
-  this.stage.addChild(this.locomotiveEntity.sprite);
-}
-
 LD39.TrainRideScreen.prototype.update = function(delta) {
   LD39.Screen.prototype.update.call(this, delta);
+  this.level.update(delta);
+
+  for (var index = 0; index < this.trackGrounds.length; index++) {
+    this.stage.removeChild(this.trackGrounds[index]);
+  }
+
+  var trackPoints = this.level.track.getTrackPoints();
+  for (var index = 1; index < trackPoints.length; index++) {
+    var startPoint = trackPoints[index - 1];
+    var endPoint = trackPoints[index];
+
+    // this.addGround(startPoint, endPoint);
+  }
+}
+
+LD39.TrainRideScreen.prototype.addGround = function(startPoint, endPoint) {
+  var trackGround = new PIXI.Graphics();
+  var trainHeight = 400;
+
+  trackGround.beginFill(0x4b692f);
+
+  var drawPoints = [
+    0, 0,
+    endPoint.x, endPoint.y,
+    endPoint.x, 600,
+    0, 600
+  ];
+
+  trackGround.drawPolygon(drawPoints);
+
+  trackGround.endFill();
+
+  trackGround.x = startPoint.x;
+  trackGround.y = startPoint.y + trainHeight;
+  this.trackGrounds.push(trackGround);
+  this.stage.addChild(trackGround);
 }
 
 LD39.TrainRideScreen.prototype.initialize = function(delta) {
