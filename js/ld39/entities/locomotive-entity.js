@@ -32,6 +32,10 @@ LD39.LocomotiveEntity = function() {
     trainSprite.addChild(wheelSprite);
   }
 
+  this.chimneyBox = new PIXI.Container();
+  this.chimneyBox.position.set(15, -35);
+  trainSprite.addChild(this.chimneyBox);
+
   var bodySprite = new PIXI.Sprite(trainTexture);
   bodySprite.position.set(0, 0);
   bodySprite.anchor.set(0.5, 0.5);
@@ -66,6 +70,12 @@ LD39.LocomotiveEntity.prototype.update = function(delta) {
   this.setRotation(this.physicsBody.bodies[0].angle);
 
   this.processResources(delta);
+  // var position = this.chimneyBox.position;
+  var position = this.getPosition();
+
+  this.smokeFactory.setSmokePosition(position.x + 15, position.y - 15);
+  // this.smokeFactory.setSmokePosition(400, -200);
+  this.smokeFactory.update(delta);
 }
 
 LD39.LocomotiveEntity.prototype.processResources = function(delta) {
@@ -114,7 +124,7 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
 
       // console.log("Final forward multiplier: " + forwardMultiplier);
       finalSteamConsumption = steamConsumptionAmount * forwardMultiplier;
-      this.currentParameters['steam'] -= finalSteamConsumption;
+
       finalTorque = throttleMultiplier * forwardMultiplier * sliderConstant * torqueConstant;
     } else if (throttleValue < idleValue) {
       // Try to burn backward
@@ -124,9 +134,10 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
       backwardMultiplier = Math.min(backwardMultiplier, maxBackwardMultiplier);
 
       finalSteamConsumption = steamConsumptionAmount * backwardMultiplier;
-      this.currentParameters['steam'] -= finalSteamConsumption;
-      finalTorque = throttleMultiplier * backwardMultiplier * sliderConstant * torqueConstant;
+      finalTorque = -1.0 * throttleMultiplier * backwardMultiplier * sliderConstant * torqueConstant;
     }
+
+    this.currentParameters['steam'] -= finalSteamConsumption;
   }
 
   // console.log("Consumed " + finalSteamConsumption.toFixed(10) + " steam!");
