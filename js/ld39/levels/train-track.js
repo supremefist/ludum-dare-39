@@ -52,7 +52,7 @@ LD39.TrainTrack.prototype.getTrackPhysicsSpriteForPoints = function(startPoint, 
   var rotation = LD39.Utils.angleBetweenPoints(startPoint, endPoint);
 
   var rectangleGraphics = new PIXI.Graphics();
-  rectangleGraphics.beginFill(0x66CCFF);
+  rectangleGraphics.beginFill(0x663730);
   rectangleGraphics.lineStyle(4, 0x1a1a1a, 1);
   rectangleGraphics.drawRect(0, 0, width, height);
   rectangleGraphics.endFill();
@@ -111,7 +111,7 @@ LD39.TrainTrack.prototype.getTrackPhysicsObjects = function(sprites) {
     var startPoint = Object.create(this.points[index - 1]);
     var endPoint = Object.create(this.points[index]);
 
-    if (endPoint.type != 'ground') {
+    if ((endPoint.type != 'ground') && (endPoint.type != 'bridge')) {
       continue;
     }
 

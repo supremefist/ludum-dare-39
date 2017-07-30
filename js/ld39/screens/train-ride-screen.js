@@ -1,20 +1,31 @@
 var LD39 = LD39 || {};
 
-LD39.TrainRideScreen = function() {
+LD39.TrainRideScreen = function(levelNumber) {
   LD39.Screen.call(this);
 
   // this.musicResource = "music/main";
 
   this.level = null;
   this.overlay = null;
-  this.createLevel();
+  this.createLevel(levelNumber);
 }
 
 LD39.TrainRideScreen.prototype = Object.create(LD39.Screen.prototype);
 LD39.TrainRideScreen.prototype.constructor = LD39.TrainRideScreen;
 
-LD39.TrainRideScreen.prototype.createLevel = function() {
-  this.level = new LD39.Level05(this.stage);
+LD39.TrainRideScreen.prototype.createLevel = function(levelNumber) {
+  if (levelNumber == 1) {
+    this.level = new LD39.Level01(this.stage);
+  } else if (levelNumber == 2) {
+    this.level = new LD39.Level02(this.stage);
+  } else if (levelNumber == 3) {
+    this.level = new LD39.Level03(this.stage);
+  } else if (levelNumber == 4) {
+    this.level = new LD39.Level04(this.stage);
+  } else if (levelNumber == 5) {
+    this.level = new LD39.Level05(this.stage);
+  }
+
 }
 
 LD39.TrainRideScreen.prototype.render = function(renderer) {

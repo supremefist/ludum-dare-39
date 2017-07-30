@@ -42,7 +42,7 @@ LD39.MenuScreen.prototype.initializeKeyboard = function() {
   var retryKey = this.keyboard(13);
 
   retryKey.press = function() {
-    LD39.setCurrentScreen(new LD39.TrainRideScreen());
+    LD39.setCurrentScreen(new LD39.TrainRideScreen(3));
   };
   retryKey.release = function() {
 
