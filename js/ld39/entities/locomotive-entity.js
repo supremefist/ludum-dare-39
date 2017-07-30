@@ -9,6 +9,15 @@ LD39.LocomotiveEntity = function() {
 
   var trainSprite = new PIXI.Container();
 
+  var coalBurnTime = 0;
+  var steamBurnTime = 0;
+  this.currentParameters = {
+    "coal": 1.0,
+    "burningCoal": 0.0,
+    "steam": 0.0,
+    "throttle": 0.3
+  };
+
   this.wheelSprites = [];
   var wheelOffsets = [-24, -12, 0, 20];
   // var wheelOffsets = [];
@@ -48,17 +57,54 @@ LD39.LocomotiveEntity.prototype.update = function(delta) {
 
   this.setPosition(this.physicsBody.bodies[0].position.x, this.physicsBody.bodies[0].position.y);
   this.setRotation(this.physicsBody.bodies[0].angle);
+
+  this.processResources(delta);
 }
 
-LD39.LocomotiveEntity.prototype.getWheelPositions = function() {
-  var locomotiveBounds = this.sprite.getBounds();
+LD39.LocomotiveEntity.prototype.processResources = function(delta) {
+  var fullBurningDuration = 20000;
+  var fullSteamGenerationDuration = 15000;
 
-  var backPosition = this.wheelSprites[0].getGlobalPosition();
-  var frontPosition = this.wheelSprites[3].getGlobalPosition();
-  return {
-    "back": backPosition,
-    "front": frontPosition,
+  var burnAmount = delta / fullBurningDuration;
+  if (this.currentParameters['burningCoal'] > burnAmount) {
+    this.currentParameters['burningCoal'] -= burnAmount;
+    var generatedSteamAmount = delta / fullSteamGenerationDuration;
+    // console.log("Generated " + generatedSteamAmount + " steam");
+    this.currentParameters['steam'] += generatedSteamAmount;
   }
+
+  if (this.currentParameters['burningCoal'] >= burnAmount) {
+    this.currentParameters['burningCoal'] -= burnAmount;
+    var generatedSteamAmount = delta / fullSteamGenerationDuration;
+    this.currentParameters['steam'] += generatedSteamAmount;
+  }
+
+  var fullSteamUseDuration = 10000;
+  var throttleMultiplier = 0.02;
+  var idleValue = 0.3;
+
+  var finalTorque = 0;
+  var throttleValue = this.currentParameters['throttle'];
+
+  if (this.currentParameters['steam'] > 0.05) {
+    if (throttleValue > idleValue) {
+      // Try to burn forward
+      var forwardMultiplier = (throttleValue - idleValue) / 0.2;
+      var steamConsumption = delta / fullSteamUseDuration;
+      var maxForwardMultiplier = Math.min(3, Math.floor(this.currentParameters['steam'] / steamConsumption));
+
+      forwardMultiplier = Math.min(forwardMultiplier, maxForwardMultiplier);
+
+      this.currentParameters['steam'] -= steamConsumption * forwardMultiplier;
+      finalTorque = throttleMultiplier * forwardMultiplier * 0.2;
+    } else if (throttleValue < idleValue) {
+      // Try to burn backward
+      finalTorque = throttleMultiplier * (throttleValue - idleValue);
+    }
+  }
+
+  this.physicsBody.bodies[1].torque = finalTorque;
+  // console.log(this.currentParameters['steam'] + ": " + finalTorque);
 }
 
 LD39.LocomotiveEntity.prototype.setPhysicsPosition = function(x, y) {
@@ -71,17 +117,7 @@ LD39.LocomotiveEntity.prototype.setPhysicsPosition = function(x, y) {
 }
 
 LD39.LocomotiveEntity.prototype.setThrottle = function(throttleValue) {
-  var throttleMultiplier = 0.02;
-  var idleValue = 0.3;
-
-  var finalTorque = 0;
-  if (throttleValue > idleValue) {
-    finalTorque = throttleMultiplier * (throttleValue - idleValue);
-  } else if (throttleValue < idleValue) {
-    finalTorque = throttleMultiplier * (throttleValue - idleValue);
-  }
-
-  this.physicsBody.bodies[1].torque = finalTorque;
+  this.currentParameters['throttle'] = throttleValue;
 }
 
 LD39.LocomotiveEntity.prototype.setPosition = function(x, y) {
@@ -104,4 +140,39 @@ LD39.LocomotiveEntity.prototype.setStatic = function(isStatic) {
 
     // Matter.Body.setStatic(this.physicsBody.bodies[index], isStatic);
   }
+}
+
+LD39.LocomotiveEntity.prototype.accelerate = function() {
+  if (this.currentParameters['throttle'] + 0.2 > 1.0) {
+    return;
+  }
+
+  this.currentParameters['throttle'] += 0.2;
+}
+
+LD39.LocomotiveEntity.prototype.decelerate = function() {
+  if (this.currentParameters['throttle'] - 0.2 < 0.0) {
+    return;
+  }
+
+  this.currentParameters['throttle'] -= 0.2;
+}
+
+LD39.LocomotiveEntity.prototype.feedCoal = function() {
+
+  var coalConsumption = 0.1;
+  var burningCoalIncrement = 0.25;
+
+  if (this.currentParameters['coal'] < coalConsumption) {
+    console.log("Not enough coal");
+    return;
+  }
+
+  if (this.currentParameters['burningCoal'] + burningCoalIncrement > 1.0) {
+    console.log("No burning space");
+    return;
+  }
+
+  this.currentParameters['coal'] -= coalConsumption;
+  this.currentParameters['burningCoal'] += burningCoalIncrement;
 }

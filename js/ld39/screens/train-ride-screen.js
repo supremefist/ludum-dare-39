@@ -58,6 +58,13 @@ LD39.TrainRideScreen.prototype.initializeKeyboard = function() {
   down.release = function() {
     level.downRelease();
   }
+
+  right.press = function() {
+    level.rightPress();
+  };
+  right.release = function() {
+    level.rightRelease();
+  }
 }
 
 LD39.TrainRideScreen.prototype.keyboard = function(keyCode) {

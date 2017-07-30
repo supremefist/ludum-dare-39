@@ -22,10 +22,21 @@ LD39.BaseLevel.prototype.update = function(delta) {
   Matter.Engine.update(this.physicsEngine, delta);
 
   this.locomotiveEntity.update(delta);
-  this.throttleBarEntity.update(delta);
+
+  this.coalBarEntity.setProgress(this.locomotiveEntity.currentParameters['coal']);
   this.coalBarEntity.update(delta);
 
-  this.locomotiveEntity.setThrottle(this.throttleBarEntity.getProgress());
+  this.burningCoalBarEntity.setProgress(this.locomotiveEntity.currentParameters['burningCoal']);
+  this.burningCoalBarEntity.update(delta);
+
+  this.steamBarEntity.setProgress(this.locomotiveEntity.currentParameters['steam']);
+  this.steamBarEntity.update(delta);
+
+  var throttle = this.locomotiveEntity.currentParameters['throttle'];
+  this.throttleBarEntity.setProgress(throttle);
+  this.throttleBarEntity.update(delta);
+
+  this.locomotiveEntity.setThrottle(throttle);
 
   if (this.idleDuration > 0) {
     this.idleDuration -= delta;
@@ -85,20 +96,26 @@ LD39.BaseLevel.prototype.createWorld = function() {
 }
 
 LD39.BaseLevel.prototype.createInterface = function() {
+  var interfaceX = 10;
+  var interfaceY = 10;
+
   this.coalBarEntity = new LD39.ResourceBarEntity(0.2, 0.2, 0.3, 0, 0, 0);
-  this.coalBarEntity.setPosition(10, 50);
+  this.coalBarEntity.setPosition(interfaceX, interfaceY);
+  this.coalBarEntity.setProgress(1.0);
   this.interfaceStage.addChild(this.coalBarEntity.sprite);
 
   this.burningCoalBarEntity = new LD39.ResourceBarEntity(0.8, 0.5, 0.0, 0.2, 0.1, 0);
-  this.burningCoalBarEntity.setPosition(35, 50);
+  this.burningCoalBarEntity.setPosition(interfaceX + 25, interfaceY);
+  this.burningCoalBarEntity.setProgress(0.0);
   this.interfaceStage.addChild(this.burningCoalBarEntity.sprite);
 
   this.steamBarEntity = new LD39.ResourceBarEntity(0.6, 0.6, 1.0, 0.1, 0.1, 0.5);
-  this.steamBarEntity.setPosition(60, 50);
+  this.steamBarEntity.setPosition(interfaceX + 50, interfaceY);
+  this.steamBarEntity.setProgress(0.0);
   this.interfaceStage.addChild(this.steamBarEntity.sprite);
 
   this.throttleBarEntity = new LD39.ThrottleBarEntity();
-  this.throttleBarEntity.setPosition(85, 50);
+  this.throttleBarEntity.setPosition(interfaceX + 75, interfaceY);
   this.interfaceStage.addChild(this.throttleBarEntity.sprite);
 
   this.stage.addChild(this.interfaceStage);
@@ -159,7 +176,7 @@ LD39.BaseLevel.prototype.createTrack = function() {
 }
 
 LD39.BaseLevel.prototype.upPress = function() {
-  this.throttleBarEntity.changeProgress(0.2);
+  this.locomotiveEntity.accelerate();
 }
 
 LD39.BaseLevel.prototype.upRelease = function() {
@@ -167,9 +184,17 @@ LD39.BaseLevel.prototype.upRelease = function() {
 }
 
 LD39.BaseLevel.prototype.downPress = function() {
-  this.throttleBarEntity.changeProgress(-0.2);
+  this.locomotiveEntity.decelerate();
 }
 
 LD39.BaseLevel.prototype.downRelease = function() {
+
+}
+
+LD39.BaseLevel.prototype.rightPress = function() {
+  this.locomotiveEntity.feedCoal();
+}
+
+LD39.BaseLevel.prototype.rightRelease = function() {
 
 }
