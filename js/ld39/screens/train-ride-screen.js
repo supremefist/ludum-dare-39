@@ -54,6 +54,7 @@ LD39.TrainRideScreen.prototype.initializeKeyboard = function() {
   var up = this.keyboard(38);
   var right = this.keyboard(39);
   var down = this.keyboard(40);
+  var space = this.keyboard(32);
 
   var playerEntity = this.playerEntity;
   var coreSpeed = 25;
@@ -78,5 +79,12 @@ LD39.TrainRideScreen.prototype.initializeKeyboard = function() {
   };
   right.release = function() {
     level.rightRelease();
+  }
+
+  space.press = function() {
+    level.spacePress();
+  };
+  space.release = function() {
+    level.spaceRelease();
   }
 }

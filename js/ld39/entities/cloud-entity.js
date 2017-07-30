@@ -4,8 +4,13 @@ LD39.CloudEntity = function(totalDuration) {
   LD39.Entity.call(this);
 
   var circle = new PIXI.Graphics();
-  circle.beginFill(0xEEEEEE);
-  circle.drawCircle(0, 0, 200);
+
+  var cloudIntensity = 0.9 + Math.random() * 0.09;
+  var cloudColor = PIXI.utils.rgb2hex([cloudIntensity, cloudIntensity, cloudIntensity]);
+  var cloudSize = 200 + Math.random() * 150 - 75;
+
+  circle.beginFill(cloudColor);
+  circle.drawCircle(0, 0, cloudSize);
   circle.endFill();
   // circle.alpha = 0.5;
   circle.x = 0;

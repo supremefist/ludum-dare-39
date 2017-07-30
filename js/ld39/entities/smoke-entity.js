@@ -15,7 +15,7 @@ LD39.SmokeEntity = function(totalDuration) {
   this.driftRate = this.baseDriftRate * (Math.random() * this.driftRateVariance - this.driftRateVariance / 2);
 
   var circle = new PIXI.Graphics();
-  circle.beginFill(0xEEEEEE);
+  circle.beginFill(0x777777);
   circle.drawCircle(0, 0, 4);
   circle.endFill();
   // circle.alpha = 0.5;

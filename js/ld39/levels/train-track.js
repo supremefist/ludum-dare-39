@@ -1,7 +1,7 @@
 var LD39 = LD39 || {};
 
 LD39.TrainTrack = function() {
-  this.points = [new PIXI.Point(-200, 0), new PIXI.Point(200, 0)];
+  this.points = [new PIXI.Point(-400, -200), new PIXI.Point(-200, -200), new PIXI.Point(-200, 0), new PIXI.Point(200, 0)];
   this.currentPoints = null;
 }
 

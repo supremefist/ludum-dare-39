@@ -192,8 +192,7 @@ LD39.BaseLevel.prototype.createSky = function() {
   var baseCloudDensity = 200;
   var baseCloudDensityVariance = 0.2;
   var cloudDensity = baseCloudDensity * (1.0 + (Math.random() * baseCloudDensityVariance - baseCloudDensityVariance / 2));
-  var cloudCount = cloudScapeWidth / cloudDensity;
-  console.log(cloudCount);
+  var cloudCount = Math.round(cloudScapeWidth / cloudDensity);
 
   var cloudStage = new PIXI.Container();
   for (var index = 0; index < cloudCount; index++) {
@@ -305,4 +304,12 @@ LD39.BaseLevel.prototype.rightPress = function() {
 
 LD39.BaseLevel.prototype.rightRelease = function() {
 
+}
+
+LD39.BaseLevel.prototype.spacePress = function() {
+  this.locomotiveEntity.applyBrakes();
+}
+
+LD39.BaseLevel.prototype.spaceRelease = function() {
+  this.locomotiveEntity.releaseBrakes();
 }

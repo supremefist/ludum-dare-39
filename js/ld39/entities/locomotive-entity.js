@@ -19,6 +19,7 @@ LD39.LocomotiveEntity = function() {
     "effectiveThrottle": 0.3
   };
 
+  this.braking = false;
   this.wheelSprites = [];
   var wheelOffsets = [-24, -12, 0, 20];
   // var wheelOffsets = [];
@@ -167,8 +168,27 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
 
   // console.log("Consumed " + finalSteamConsumption.toFixed(10) + " steam!");
 
-  this.physicsBody.bodies[1].torque = finalTorque;
-  this.physicsBody.bodies[2].torque = finalTorque;
+  if (this.braking) {
+    if (Math.abs(this.physicsBody.bodies[0].velocity.x) > 0.1) {
+      // Active braking
+      var brakeTorque = 0.0025;
+
+      if (this.physicsBody.bodies[0].velocity.x < 0) {
+        this.physicsBody.bodies[1].torque = brakeTorque;
+        this.physicsBody.bodies[2].torque = brakeTorque;
+      } else {
+        this.physicsBody.bodies[1].torque = -brakeTorque;
+        this.physicsBody.bodies[2].torque = -brakeTorque;
+      }
+    } else {
+      this.physicsBody.bodies[1].torque = 0;
+      this.physicsBody.bodies[2].torque = 0;
+    }
+
+  } else {
+    this.physicsBody.bodies[1].torque = finalTorque;
+    this.physicsBody.bodies[2].torque = finalTorque;
+  }
   // console.log(this.currentParameters['steam'] + ": " + finalTorque);
 }
 
@@ -240,4 +260,12 @@ LD39.LocomotiveEntity.prototype.feedCoal = function() {
 
   this.currentParameters['coal'] -= coalConsumption;
   this.currentParameters['burningCoal'] += burningCoalIncrement;
+}
+
+LD39.LocomotiveEntity.prototype.applyBrakes = function() {
+  this.braking = true;
+}
+
+LD39.LocomotiveEntity.prototype.releaseBrakes = function() {
+  this.braking = false;
 }
