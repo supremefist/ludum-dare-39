@@ -169,7 +169,8 @@ LD39.BaseLevel.prototype.createEntities = function() {
   this.locomotiveEntity.setStatic(true);
 
   Matter.World.add(this.physicsEngine.world, [this.locomotiveEntity.physicsBody]);
-  this.worldStage.addChild(this.locomotiveEntity.sprite);
+
+  this.locomotiveEntity.addToStage(this.worldStage);
 }
 
 LD39.BaseLevel.prototype.createTrack = function() {

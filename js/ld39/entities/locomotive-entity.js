@@ -44,10 +44,17 @@ LD39.LocomotiveEntity = function() {
   // this.physicsBody = Matter.Composites.car(64, 32, 64, 32, 24);
   // Matter.Body.applyForce(this.physicsBody.bodies[0], new PIXI.Point(0, 0), new PIXI.Point(0.05, 0));
   this.setSprite(trainSprite);
+
+  this.smokeFactory = new LD39.SmokeFactory();
 }
 
 LD39.LocomotiveEntity.prototype = Object.create(LD39.Entity.prototype);
 LD39.LocomotiveEntity.prototype.constructor = LD39.LocomotiveEntity;
+
+LD39.LocomotiveEntity.prototype.addToStage = function(stage) {
+  stage.addChild(this.sprite);
+  stage.addChild(this.smokeFactory.stage);
+}
 
 LD39.LocomotiveEntity.prototype.update = function(delta) {
   LD39.Entity.prototype.update.call(this, delta);
@@ -95,7 +102,7 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
     var steamConsumptionAmount = delta / fullSteamUseDuration;
 
     var sliderConstant = 0.2;
-    var torqueConstant = 1.0;
+    var torqueConstant = 1.5;
     var finalSteamConsumption = 0;
 
     if (throttleValue > idleValue) {
