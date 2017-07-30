@@ -16,4 +16,8 @@ LD39.Level01.prototype.createTrack = function() {
   this.track.addTrackPoint(800, 120);
   this.track.addTrackPoint(1300, 170);
   this.track.addTrackPoint(2000, 250);
+  this.track.addBridgePoint(2400, 250);
+  this.track.addTrackPoint(2800, 150);
+  this.track.addTrackPoint(3300, 0);
+  this.track.addTrackPoint(3600, 0);
 }

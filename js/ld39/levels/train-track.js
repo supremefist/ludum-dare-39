@@ -6,10 +6,22 @@ LD39.TrainTrack = function() {
 }
 
 LD39.TrainTrack.prototype.addTrackPoint = function(x, y) {
-  this.points.push(new PIXI.Point(x, y));
+  this.points.push({
+    type: "ground",
+    x: x,
+    y: y
+  });
 }
 
-LD39.TrainTrack.prototype.getTrackPoints = function() {
+LD39.TrainTrack.prototype.addBridgePoint = function(x, y) {
+  this.points.push({
+    type: "strong-bridge",
+    x: x,
+    y: y
+  });
+}
+
+LD39.TrainTrack.prototype.getLevelPoints = function() {
   return this.points;
 }
 

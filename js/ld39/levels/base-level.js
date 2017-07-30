@@ -58,11 +58,11 @@ LD39.BaseLevel.prototype.createGround = function() {
     this.worldStage.addChild(padSprites[index]);
   }
 
-  var trackPoints = this.track.getTrackPoints();
-  for (var index = 1; index < trackPoints.length; index++) {
-    var startPoint = trackPoints[index - 1];
-    var endPoint = trackPoints[index];
-    this.addVisibleGround(startPoint, endPoint);
+  var levelPoints = this.track.getLevelPoints();
+  for (var index = 1; index < levelPoints.length; index++) {
+    var previousPoint = levelPoints[index - 1];
+    var currentPoint = levelPoints[index];
+    this.addVisibleGround(previousPoint, currentPoint);
   }
 }
 
@@ -99,17 +99,17 @@ LD39.BaseLevel.prototype.createInterface = function() {
   var interfaceX = 10;
   var interfaceY = 10;
 
-  this.coalBarEntity = new LD39.ResourceBarEntity(0.2, 0.2, 0.3, 0, 0, 0);
+  this.coalBarEntity = new LD39.ResourceBarEntity(0.2, 0.2, 0.3, 0, 0, 0, false);
   this.coalBarEntity.setPosition(interfaceX, interfaceY);
   this.coalBarEntity.setProgress(1.0);
   this.interfaceStage.addChild(this.coalBarEntity.sprite);
 
-  this.burningCoalBarEntity = new LD39.ResourceBarEntity(0.8, 0.5, 0.0, 0.2, 0.1, 0);
+  this.burningCoalBarEntity = new LD39.ResourceBarEntity(0.8, 0.5, 0.0, 0.2, 0.1, 0, false);
   this.burningCoalBarEntity.setPosition(interfaceX + 25, interfaceY);
   this.burningCoalBarEntity.setProgress(0.0);
   this.interfaceStage.addChild(this.burningCoalBarEntity.sprite);
 
-  this.steamBarEntity = new LD39.ResourceBarEntity(0.6, 0.6, 1.0, 0.1, 0.1, 0.5);
+  this.steamBarEntity = new LD39.ResourceBarEntity(0.6, 0.6, 1.0, 0.1, 0.1, 0.5, true);
   this.steamBarEntity.setPosition(interfaceX + 50, interfaceY);
   this.steamBarEntity.setProgress(0.0);
   this.interfaceStage.addChild(this.steamBarEntity.sprite);
@@ -128,9 +128,10 @@ LD39.BaseLevel.prototype.createVisibleWorld = function() {
 
 LD39.BaseLevel.prototype.addVisibleGround = function(startPoint, endPoint) {
   var trackGround = new PIXI.Graphics();
-  var trainHeight = 0;
 
   trackGround.beginFill(0x4b692f);
+
+  var grountType = endPoint.type;
 
   var relativeStartX = 0;
   var relativeStartY = 0;
@@ -149,7 +150,7 @@ LD39.BaseLevel.prototype.addVisibleGround = function(startPoint, endPoint) {
   trackGround.endFill();
 
   trackGround.x = startPoint.x;
-  trackGround.y = startPoint.y + trainHeight;
+  trackGround.y = startPoint.y;
   this.trackGrounds.push(trackGround);
   this.worldStage.addChild(trackGround);
 }

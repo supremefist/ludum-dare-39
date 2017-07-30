@@ -62,48 +62,70 @@ LD39.LocomotiveEntity.prototype.update = function(delta) {
 }
 
 LD39.LocomotiveEntity.prototype.processResources = function(delta) {
-  var fullBurningDuration = 20000;
-  var fullSteamGenerationDuration = 15000;
+  var baseDuration = 10000;
 
+  var burnToSteamRatio = 0.1;
+  var steamToEngineRatio = 2;
+
+  var fullBurningDuration = baseDuration * 15;
+  var fullSteamGenerationDuration = fullBurningDuration * burnToSteamRatio;
+  var fullSteamUseDuration = fullSteamGenerationDuration * steamToEngineRatio;
+
+  // console.log("Starting steam: " + this.currentParameters.steam);
   var burnAmount = delta / fullBurningDuration;
-  if (this.currentParameters['burningCoal'] > burnAmount) {
-    this.currentParameters['burningCoal'] -= burnAmount;
-    var generatedSteamAmount = delta / fullSteamGenerationDuration;
-    // console.log("Generated " + generatedSteamAmount + " steam");
-    this.currentParameters['steam'] += generatedSteamAmount;
-  }
 
   if (this.currentParameters['burningCoal'] >= burnAmount) {
     this.currentParameters['burningCoal'] -= burnAmount;
     var generatedSteamAmount = delta / fullSteamGenerationDuration;
     this.currentParameters['steam'] += generatedSteamAmount;
+
+    // console.log("Generated " + generatedSteamAmount.toFixed(10) + " steam!");
   }
 
-  var fullSteamUseDuration = 10000;
+  // console.log("Steam after generation: " + this.currentParameters.steam);
+
   var throttleMultiplier = 0.02;
   var idleValue = 0.3;
 
   var finalTorque = 0;
   var throttleValue = this.currentParameters['throttle'];
 
+  var finalSteamConsumption = 0;
   if (this.currentParameters['steam'] > 0.05) {
+    var steamConsumptionAmount = delta / fullSteamUseDuration;
+
+    var sliderConstant = 0.2;
+    var torqueConstant = 1.0;
+    var finalSteamConsumption = 0;
+
     if (throttleValue > idleValue) {
       // Try to burn forward
-      var forwardMultiplier = (throttleValue - idleValue) / 0.2;
-      var steamConsumption = delta / fullSteamUseDuration;
-      var maxForwardMultiplier = Math.min(3, Math.floor(this.currentParameters['steam'] / steamConsumption));
+      var forwardMultiplier = (throttleValue - idleValue) / sliderConstant;
+      var maxForwardMultiplier = Math.min(3, Math.floor(this.currentParameters['steam'] / steamConsumptionAmount));
 
       forwardMultiplier = Math.min(forwardMultiplier, maxForwardMultiplier);
 
-      this.currentParameters['steam'] -= steamConsumption * forwardMultiplier;
-      finalTorque = throttleMultiplier * forwardMultiplier * 0.2;
+      // console.log("Final forward multiplier: " + forwardMultiplier);
+      finalSteamConsumption = steamConsumptionAmount * forwardMultiplier;
+      this.currentParameters['steam'] -= finalSteamConsumption;
+      finalTorque = throttleMultiplier * forwardMultiplier * sliderConstant * torqueConstant;
     } else if (throttleValue < idleValue) {
       // Try to burn backward
-      finalTorque = throttleMultiplier * (throttleValue - idleValue);
+      var backwardMultiplier = (idleValue - throttleValue) / sliderConstant;
+      var maxBackwardMultiplier = Math.min(1, Math.floor(this.currentParameters['steam'] / steamConsumptionAmount));
+
+      backwardMultiplier = Math.min(backwardMultiplier, maxBackwardMultiplier);
+
+      finalSteamConsumption = steamConsumptionAmount * backwardMultiplier;
+      this.currentParameters['steam'] -= finalSteamConsumption;
+      finalTorque = throttleMultiplier * backwardMultiplier * sliderConstant * torqueConstant;
     }
   }
 
+  // console.log("Consumed " + finalSteamConsumption.toFixed(10) + " steam!");
+
   this.physicsBody.bodies[1].torque = finalTorque;
+  this.physicsBody.bodies[2].torque = finalTorque;
   // console.log(this.currentParameters['steam'] + ": " + finalTorque);
 }
 
