@@ -97,8 +97,8 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
     this.currentParameters['burningCoal'] -= burnAmount;
     var generatedSteamAmount = delta / fullSteamGenerationDuration;
     this.currentParameters['steam'] += generatedSteamAmount;
-
     // console.log("Generated " + generatedSteamAmount.toFixed(10) + " steam!");
+    // console.log(this.currentParameters['steam']);
   }
 
   // console.log("Steam after generation: " + this.currentParameters.steam);

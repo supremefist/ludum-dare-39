@@ -10,6 +10,9 @@ LD39.BaseLevel = function(stage) {
 
   this.throttleBarEntity = null;
   this.coalBarEntity = null;
+  this.burningCoalBarEntity = null;
+  this.steamBarEntity = null;
+  this.helperTextEntity = null;
 
   this.physicsEngine = null;
   this.trackGrounds = [];
@@ -51,6 +54,25 @@ LD39.BaseLevel.prototype.update = function(delta) {
   }
 
   this.updateCurrentTrackSegment();
+  this.updateHelpMessage();
+}
+
+LD39.BaseLevel.prototype.updateHelpMessage = function() {
+  var coalAmount = this.locomotiveEntity.currentParameters.coal;
+  var burningCoalAmount = this.locomotiveEntity.currentParameters.burningCoal;
+  var steamAmount = this.locomotiveEntity.currentParameters.steam;
+
+  if (steamAmount >= 1.0) {
+    this.helperTextEntity.setText("Steam critical! (" + Math.round(steamAmount * 100) + "%)");
+  } else if (steamAmount > 0.8) {
+    this.helperTextEntity.setText("Steam too high!");
+  } else if (steamAmount < 0.05) {
+    this.helperTextEntity.setText("Low steam!");
+  } else if (burningCoalAmount > 0.95) {
+    this.helperTextEntity.setText("Burn chamber full!");
+  } else {
+    this.helperTextEntity.setText("");
+  }
 }
 
 LD39.BaseLevel.prototype.updateCurrentTrackSegment = function() {
@@ -133,7 +155,7 @@ LD39.BaseLevel.prototype.createInterface = function() {
   this.coalBarEntity.setProgress(1.0);
   this.interfaceStage.addChild(this.coalBarEntity.sprite);
 
-  this.burningCoalBarEntity = new LD39.ResourceBarEntity(0.8, 0.5, 0.0, 0.2, 0.1, 0, false);
+  this.burningCoalBarEntity = new LD39.BurningCoalBarEntity(0.8, 0.5, 0.0, 0.2, 0.1, 0, false);
   this.burningCoalBarEntity.setPosition(interfaceX + 25, interfaceY);
   this.burningCoalBarEntity.setProgress(0.0);
   this.interfaceStage.addChild(this.burningCoalBarEntity.sprite);
@@ -146,6 +168,10 @@ LD39.BaseLevel.prototype.createInterface = function() {
   this.throttleBarEntity = new LD39.ThrottleBarEntity();
   this.throttleBarEntity.setPosition(interfaceX + 75, interfaceY);
   this.interfaceStage.addChild(this.throttleBarEntity.sprite);
+
+  this.helperTextEntity = new LD39.TextEntity("", 16, 0x000000);
+  this.helperTextEntity.setPosition(interfaceX, interfaceY + 160);
+  this.interfaceStage.addChild(this.helperTextEntity.sprite);
 
   this.stage.addChild(this.interfaceStage);
 }

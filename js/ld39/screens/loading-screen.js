@@ -3,7 +3,7 @@ var LD39 = LD39 || {};
 LD39.LoadingScreen = function() {
   LD39.Screen.call(this);
 
-  this.message = new LD39.TextEntity("Loading: 0%", 32);
+  this.message = new LD39.TextEntity("Loading: 0%", 32, 0xffffff);
 
   this.message.setPosition(300, 250);
 
