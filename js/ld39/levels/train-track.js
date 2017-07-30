@@ -21,10 +21,9 @@ LD39.TrainTrack.prototype.addStart = function() {
 }
 
 LD39.TrainTrack.prototype.addEnd = function() {
-  this.addTrackPoint(800, 0, "ground", "station");
-  this.addTrackPoint(0, -200, "ground", null);
-  this.addTrackPoint(800, -400, "ground", null);
-
+  this.addTrackPoint(400, 0, "ground", "station");
+  this.addTrackPoint(0, 400, "ground", null);
+  this.addTrackPoint(800, 0, "hole", null);
 }
 
 LD39.TrainTrack.prototype.addTrackPoint = function(deltaX, deltaY, type, building) {
@@ -39,7 +38,7 @@ LD39.TrainTrack.prototype.addTrackPoint = function(deltaX, deltaY, type, buildin
 }
 
 LD39.TrainTrack.prototype.addWarning = function(warningString) {
-  
+
 }
 
 LD39.TrainTrack.prototype.getLevelPoints = function() {

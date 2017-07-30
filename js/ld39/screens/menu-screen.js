@@ -9,30 +9,37 @@ LD39.MenuScreen = function(playerState) {
   overlay.endFill();
   this.stage.addChild(overlay);
 
-  successMessage = new LD39.TextEntity("Running out of steam", 32, 0xffffff);
+  var mainColor = 0xeeeeee;
+  var alternateColor = 0xbbbbbb;
+
+  successMessage = new LD39.TextEntity("RUNNING OUT OF STEAM", 32, mainColor);
   successMessage.setPosition(successMessage.getHorizontalCenter(800), 50);
   this.stage.addChild(successMessage.sprite);
 
-  instructionMessage = new LD39.TextEntity("Shovel coal into the furnace, create steam and use the steam to power the train.\nDon't let the steam chamber explode.", 14, 0xffffff);
-  instructionMessage.setPosition(160, 120);
+  var guideMessage = new LD39.TextEntity("A 48h competion entry for Ludum Dare 39", 12, mainColor);
+  guideMessage.setPosition(270, 90);
+  this.stage.addChild(guideMessage.sprite);
+
+  instructionMessage = new LD39.TextEntity("Shovel coal into the furnace, create steam and use the steam to power the train.\nDon't let the steam chamber explode. Get your cargo to the destination!", 14, alternateColor);
+  instructionMessage.setPosition(160, 150);
   this.stage.addChild(instructionMessage.sprite);
 
   var texture = PIXI.loader.resources["graphics/instructions"].texture;
   var instructionTexture = new PIXI.Texture(
     texture, new PIXI.Rectangle(0, 0, 223, 225));
   var instructionSprite = new PIXI.Sprite(instructionTexture);
-  instructionSprite.position.set(400, 170);
+  instructionSprite.position.set(400, 220);
   this.stage.addChild(instructionSprite);
 
-  var guideMessage = new LD39.TextEntity("Coal     Furnace     Steam     Throttle", 14, 0xffffff);
-  guideMessage.setPosition(390, 380);
+  var guideMessage = new LD39.TextEntity("Coal     Furnace     Steam     Throttle", 14, alternateColor);
+  guideMessage.setPosition(390, 430);
   this.stage.addChild(guideMessage.sprite);
 
-  instructionMessage = new LD39.TextEntity("Controls:\nRight - shovel coal\nUp - throttle forward\nDown - throttle backward\nSpace - brake", 14, 0xffffff);
+  instructionMessage = new LD39.TextEntity("Controls:\nRight - shovel coal\nUp - throttle forward\nDown - throttle backward\nSpace - brake\nEscape - menu", 14, alternateColor);
   instructionMessage.setPosition(200, 280);
   this.stage.addChild(instructionMessage.sprite);
 
-  nextStepsMessage = new LD39.TextEntity("Press 'ENTER' to start...", 16, 0xffffff);
+  nextStepsMessage = new LD39.TextEntity("Press 'ENTER' to start...", 16, alternateColor);
   this.stage.addChild(nextStepsMessage.sprite);
 
   if (playerState != undefined) {

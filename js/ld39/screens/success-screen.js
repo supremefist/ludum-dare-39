@@ -15,7 +15,7 @@ LD39.SuccessScreen = function(playerState) {
   successReasonMessage = new LD39.TextEntity("", 16, 0xffffff);
   this.stage.addChild(successReasonMessage.sprite);
 
-  nextStepsMessage = new LD39.TextEntity("Press 'ENTER' to play again!", 16, 0xffffff);
+  nextStepsMessage = new LD39.TextEntity("Press 'ENTER' to return to menu!", 16, 0xffffff);
   this.stage.addChild(nextStepsMessage.sprite);
 
   if (playerState != undefined) {
@@ -42,7 +42,7 @@ LD39.SuccessScreen.prototype.initializeKeyboard = function() {
   var retryKey = this.keyboard(13);
 
   retryKey.press = function() {
-    LD39.setCurrentScreen(new LD39.TrainRideScreen(1));
+    LD39.setCurrentScreen(new LD39.MenuScreen());
   };
   retryKey.release = function() {
 

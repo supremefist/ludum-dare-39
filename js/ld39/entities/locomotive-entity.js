@@ -214,9 +214,9 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
   var finalSteamConsumption = 0;
 
   var maxMovementMultiplier = 0;
-  if (this.currentParameters.steam > 0.4) {
+  if (this.currentParameters.steam > 0.2) {
     maxMovementMultiplier = 3;
-  } else if (this.currentParameters.steam > 0.2) {
+  } else if (this.currentParameters.steam > 0.1) {
     maxMovementMultiplier = 2;
   } else if (this.currentParameters.steam > 0) {
     maxMovementMultiplier = 1;

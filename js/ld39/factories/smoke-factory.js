@@ -49,14 +49,14 @@ LD39.SmokeFactory.prototype.updateSmokeOutput = function(movementMultiplier) {
   if (movementMultiplier == 0) {
     this.baseSmokeRate = 0;
   } else {
-    this.baseSmokeRate = 100 + (3 - movementMultiplier) * 100;
+    this.baseSmokeRate = 50 + (3 - movementMultiplier) * 50;
   }
 }
 
 LD39.SmokeFactory.prototype.addSmokeEntity = function() {
   var finalDuration = this.baseSmokeDuration * (1.0 + Math.random() * this.smokeDurationVariance - this.smokeDurationVariance / 2);
   var newSmokeEntity = new LD39.SmokeEntity(this.baseSmokeDuration);
-  
+
   newSmokeEntity.setPosition(this.smokePosition.x, this.smokePosition.y);
   this.smokeEntities[newSmokeEntity.guid] = newSmokeEntity;
   this.stage.addChild(newSmokeEntity.sprite);

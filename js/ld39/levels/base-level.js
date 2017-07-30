@@ -176,6 +176,7 @@ LD39.BaseLevel.prototype.createBuildings = function() {
   for (var index = 0; index < buildingLocations.length; index++) {
     var buildingLocation = buildingLocations[index];
 
+    var scale = true;
     var buildingX = 1;
     var buildingY = 1;
     if (buildingLocation.type != null) {
@@ -188,6 +189,10 @@ LD39.BaseLevel.prototype.createBuildings = function() {
       } else if (buildingLocation.type == 'house') {
         buildingX = 261;
         buildingY = 1;
+      } else if (buildingLocation.type == 'sign') {
+        buildingX = 391;
+        buildingY = 1;
+        scale = false;
       } else {
         console.log("Invalid building type: " + buildingLocation.type);
       }
@@ -197,10 +202,16 @@ LD39.BaseLevel.prototype.createBuildings = function() {
         texture, new PIXI.Rectangle(buildingX, buildingY, 128, 64));
       var buildingSprite = new PIXI.Sprite(buildingTexture);
 
-      buildingSprite.position.set(buildingLocation.x, buildingLocation.y - 64);
+      var yOffset = 32;
+      if (scale) {
+        yOffset *= 2;
+      }
+      buildingSprite.position.set(buildingLocation.x, buildingLocation.y - yOffset);
       // buildingSprite.position.set(32, -64);
       buildingSprite.anchor.set(0.5, 0.5);
-      buildingSprite.scale.set(2.0, 2.0);
+      if (scale) {
+        buildingSprite.scale.set(2.0, 2.0);
+      }
       this.worldStage.addChild(buildingSprite);
     }
 
@@ -360,7 +371,10 @@ LD39.BaseLevel.prototype.getPlayerState = function() {
   var trackSegmentCount = this.track.points.length;
   var currentSegments = this.track.getSegmentsAtIndex(this.currentTrackSegmentIndex);
   var currentLocomotiveY = this.locomotiveEntity.getPosition().y;
-  var minAllowableY = Math.max(currentSegments.start.y, currentSegments.end.y);
+  var minAllowableY = currentSegments.start.y;
+  if (currentSegments.end != null) {
+    minAllowableY = Math.max(minAllowableY, currentSegments.end.y);
+  }
 
   if (this.locomotiveEntity.currentParameters.steam > 1.5) {
     this.playExplosion();
@@ -381,9 +395,15 @@ LD39.BaseLevel.prototype.getPlayerState = function() {
       reason: "You fell to your death."
     }
   } else if ((this.currentTrackSegmentIndex == trackSegmentCount - 4) && (this.locomotiveEntity.isStationary())) {
+    var coalRemainingRatio = this.locomotiveEntity.currentParameters.coal;
+    var burningCoalRemainingRatio = this.locomotiveEntity.currentParameters.burningCoal;
+
+    coalRemainingRatio += burningCoalRemainingRatio * 0.2 / 0.25;
+
+    var steamRemainingRatio = this.locomotiveEntity.currentParameters.steam;
     return {
       state: "done",
-      reason: "You delivered your cargo!"
+      reason: "You delivered your cargo with " + Math.round(coalRemainingRatio * 100) + "% coal and " + Math.round(steamRemainingRatio * 100) + "% steam remaining!"
     }
   } else {
     return {
