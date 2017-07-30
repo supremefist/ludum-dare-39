@@ -14,6 +14,8 @@ LD39.BaseLevel = function(stage) {
   this.physicsEngine = null;
   this.trackGrounds = [];
 
+  this.currentTrackSegmentIndex = 0;
+
   this.createWorld();
   this.createInterface();
 }
@@ -44,6 +46,31 @@ LD39.BaseLevel.prototype.update = function(delta) {
     if (this.idleDuration < 0) {
       this.startLevel();
     }
+  }
+
+  this.updateCurrentTrackSegment();
+}
+
+LD39.BaseLevel.prototype.updateCurrentTrackSegment = function() {
+  var currentTrackSegments = this.track.getSegmentsAtIndex(this.currentTrackSegmentIndex);
+
+  var currentLocomotiveX = this.locomotiveEntity.getPosition().x;
+
+  var currentStartX = -Infinity;
+  if (currentTrackSegments.start != null) {
+    currentStartX = currentTrackSegments.start.x;
+  }
+  var currentEndX = Infinity;
+  if (currentTrackSegments.end != null) {
+    currentEndX = currentTrackSegments.end.x;
+  }
+
+  if (currentLocomotiveX < currentStartX) {
+    this.currentTrackSegmentIndex -= 1;
+    this.updateCurrentTrackSegment();
+  } else if (currentLocomotiveX > currentEndX) {
+    this.currentTrackSegmentIndex += 1;
+    this.updateCurrentTrackSegment();
   }
 }
 
@@ -171,6 +198,15 @@ LD39.BaseLevel.prototype.createEntities = function() {
   Matter.World.add(this.physicsEngine.world, [this.locomotiveEntity.physicsBody]);
 
   this.locomotiveEntity.addToStage(this.worldStage);
+}
+
+LD39.BaseLevel.prototype.getPlayerState = function() {
+  if (this.currentTrackSegmentIndex < 0) {
+    return "dead";
+  } else if (this.currentTrackSegmentIndex >= this.track.points.length - 1) {
+    return "dead";
+  }
+  return "alive";
 }
 
 LD39.BaseLevel.prototype.createTrack = function() {

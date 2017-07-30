@@ -39,7 +39,8 @@ LD39.loadProgressHandler = function(loader, resource) {
 }
 
 LD39.loadingCompleted = function(loader, resources) {
-  LD39.setCurrentScreen(new LD39.TrainRideScreen());
+  // LD39.setCurrentScreen(new LD39.TrainRideScreen());
+  LD39.setCurrentScreen(new LD39.DeathScreen());
 }
 
 LD39.loadResources = function() {

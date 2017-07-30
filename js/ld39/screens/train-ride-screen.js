@@ -6,7 +6,7 @@ LD39.TrainRideScreen = function() {
   // this.musicResource = "music/main";
 
   this.level = null;
-
+  this.overlay = null;
   this.createLevel();
 }
 
@@ -28,7 +28,18 @@ LD39.TrainRideScreen.prototype.render = function(renderer) {
 
 LD39.TrainRideScreen.prototype.update = function(delta) {
   LD39.Screen.prototype.update.call(this, delta);
-  this.level.update(delta);
+
+  if (this.level.getPlayerState() == 'dead') {
+    if (this.overlay != null) {
+      return;
+    }
+
+    LD39.setCurrentScreen(new LD39.DeathScreen());
+
+  } else {
+    LD39.Screen.prototype.update.call(this, delta);
+    this.level.update(delta);
+  }
 }
 
 LD39.TrainRideScreen.prototype.initialize = function(delta) {
@@ -65,41 +76,4 @@ LD39.TrainRideScreen.prototype.initializeKeyboard = function() {
   right.release = function() {
     level.rightRelease();
   }
-}
-
-LD39.TrainRideScreen.prototype.keyboard = function(keyCode) {
-  var key = {};
-  key.code = keyCode;
-  key.isDown = false;
-  key.isUp = true;
-  key.press = undefined;
-  key.release = undefined;
-  //The `downHandler`
-  key.downHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isUp && key.press) key.press();
-      key.isDown = true;
-      key.isUp = false;
-    }
-    event.preventDefault();
-  };
-
-  //The `upHandler`
-  key.upHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isDown && key.release) key.release();
-      key.isDown = false;
-      key.isUp = true;
-    }
-    event.preventDefault();
-  };
-
-  //Attach event listeners
-  window.addEventListener(
-    "keydown", key.downHandler.bind(key), false
-  );
-  window.addEventListener(
-    "keyup", key.upHandler.bind(key), false
-  );
-  return key;
 }

@@ -1,11 +1,11 @@
 var LD39 = LD39 || {};
 
-LD39.TextEntity = function(message) {
+LD39.TextEntity = function(message, fontSize) {
   LD39.Entity.call(this);
 
   this.setSprite(new PIXI.Text(
     message,
-    {fontFamily: "Arial", fontSize: 32, fill: "white"}
+    {fontFamily: "Arial", fontSize: fontSize, fill: "white"}
   ));
 }
 

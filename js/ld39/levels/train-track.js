@@ -96,3 +96,22 @@ LD39.TrainTrack.prototype.getTrackPhysicsObjects = function(sprites) {
 
   return pads;
 }
+
+LD39.TrainTrack.prototype.getSegmentsAtIndex = function(index) {
+  if (index < 0) {
+    return {
+      "start": null,
+      "end": this.points[0]
+    }
+  } else if (index >= this.points.length) {
+    return {
+      "start": this.points[this.points.length - 1],
+      "end": null
+    }
+  } else {
+    return {
+      "start": this.points[index],
+      "end": this.points[index + 1]
+    }
+  }
+}
