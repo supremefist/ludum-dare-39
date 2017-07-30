@@ -21,6 +21,7 @@ LD39.createTrainComposite = function(xx, yy, width, height, wheelSize) {
       label: 'Car'
     }),
   body = Bodies.rectangle(xx, yy, width, height, {
+      label: "Player",
       collisionFilter: {
         group: group
       },
@@ -31,6 +32,7 @@ LD39.createTrainComposite = function(xx, yy, width, height, wheelSize) {
     });
 
   var wheelA = Bodies.circle(xx + wheelAOffset, yy + wheelYOffset, wheelSize, {
+    label: "BackWheel",
     collisionFilter: {
       group: group
     },
@@ -38,6 +40,7 @@ LD39.createTrainComposite = function(xx, yy, width, height, wheelSize) {
   });
 
   var wheelB = Bodies.circle(xx + wheelBOffset, yy + wheelYOffset, wheelSize, {
+    label: "FrontWheel",
     collisionFilter: {
       group: group
     },

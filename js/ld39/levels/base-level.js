@@ -1,14 +1,5 @@
 var LD39 = LD39 || {};
 
-/*
-- Basic uphill and downhill
-- Long slow uphill, breakable wall
-- Flat, slow bridge
-- Downhill, forced stop
-- Breakable wall, steep hill, downhill forced stop, jump
-
-*/
-
 LD39.BaseLevel = function(stage) {
   this.stage = stage;
   this.worldStage = new PIXI.Container();
@@ -272,8 +263,10 @@ LD39.BaseLevel.prototype.createPhysicsWorld = function() {
 
 LD39.BaseLevel.prototype.createEntities = function() {
   this.locomotiveEntity = new LD39.LocomotiveEntity();
+
   this.locomotiveEntity.setPosition(0, -21);
   this.locomotiveEntity.setPhysicsPosition(0, -21);
+
   this.locomotiveEntity.setStatic(true);
 
   Matter.World.add(this.physicsEngine.world, [this.locomotiveEntity.physicsBody]);

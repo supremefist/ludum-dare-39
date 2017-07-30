@@ -40,7 +40,7 @@ LD39.TrainRideScreen.prototype.update = function(delta) {
       return;
     }
 
-    LD39.setCurrentScreen(new LD39.DeathScreen(playerState));
+    LD39.setCurrentScreen(new LD39.SuccessScreen(playerState));
 
   } else {
     LD39.Screen.prototype.update.call(this, delta);

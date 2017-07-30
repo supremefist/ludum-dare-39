@@ -15,7 +15,7 @@ LD39.DeathScreen = function(playerState) {
   deathReasonMessage = new LD39.TextEntity("", 16, 0xffffff);
   this.stage.addChild(deathReasonMessage.sprite);
 
-  nextStepsMessage = new LD39.TextEntity("Press 'space' to try again...", 16, 0xffffff);
+  nextStepsMessage = new LD39.TextEntity("Press 'ENTER' to continue...", 16, 0xffffff);
   this.stage.addChild(nextStepsMessage.sprite);
 
   if (playerState != undefined) {
@@ -39,7 +39,7 @@ LD39.DeathScreen.prototype.initialize = function(delta) {
 }
 
 LD39.DeathScreen.prototype.initializeKeyboard = function() {
-  var retryKey = this.keyboard(32);
+  var retryKey = this.keyboard(13);
 
   retryKey.press = function() {
     LD39.setCurrentScreen(new LD39.TrainRideScreen());
