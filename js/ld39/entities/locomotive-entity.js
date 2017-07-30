@@ -108,6 +108,8 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
   var throttleValue = this.currentParameters['throttle'];
 
   var finalSteamConsumption = 0;
+  var movementMultiplier = 0;
+
   if (this.currentParameters['steam'] > 0.05) {
     var steamConsumptionAmount = delta / fullSteamUseDuration;
 
@@ -117,28 +119,30 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
 
     if (throttleValue > idleValue) {
       // Try to burn forward
-      var forwardMultiplier = (throttleValue - idleValue) / sliderConstant;
-      var maxForwardMultiplier = Math.min(3, Math.floor(this.currentParameters['steam'] / steamConsumptionAmount));
+      movementMultiplier = (throttleValue - idleValue) / sliderConstant;
+      var maxMovementMultiplier = Math.round(Math.min(3, Math.floor(this.currentParameters['steam'] / steamConsumptionAmount)));
 
-      forwardMultiplier = Math.min(forwardMultiplier, maxForwardMultiplier);
+      movementMultiplier = Math.round(Math.min(movementMultiplier, maxMovementMultiplier));
 
-      // console.log("Final forward multiplier: " + forwardMultiplier);
-      finalSteamConsumption = steamConsumptionAmount * forwardMultiplier;
+      // console.log("Final forward multiplier: " + movementMultiplier);
+      finalSteamConsumption = steamConsumptionAmount * movementMultiplier;
 
-      finalTorque = throttleMultiplier * forwardMultiplier * sliderConstant * torqueConstant;
+      finalTorque = throttleMultiplier * movementMultiplier * sliderConstant * torqueConstant;
     } else if (throttleValue < idleValue) {
       // Try to burn backward
-      var backwardMultiplier = (idleValue - throttleValue) / sliderConstant;
-      var maxBackwardMultiplier = Math.min(1, Math.floor(this.currentParameters['steam'] / steamConsumptionAmount));
+      movementMultiplier = Math.round((idleValue - throttleValue) / sliderConstant);
+      var maxMovementMultiplier = Math.round(Math.min(1, Math.floor(this.currentParameters['steam'] / steamConsumptionAmount)));
 
-      backwardMultiplier = Math.min(backwardMultiplier, maxBackwardMultiplier);
+      movementMultiplier = Math.min(movementMultiplier, maxMovementMultiplier);
 
-      finalSteamConsumption = steamConsumptionAmount * backwardMultiplier;
-      finalTorque = -1.0 * throttleMultiplier * backwardMultiplier * sliderConstant * torqueConstant;
+      finalSteamConsumption = steamConsumptionAmount * movementMultiplier;
+      finalTorque = -1.0 * throttleMultiplier * movementMultiplier * sliderConstant * torqueConstant;
     }
 
     this.currentParameters['steam'] -= finalSteamConsumption;
   }
+
+  this.smokeFactory.updateSmokeOutput(movementMultiplier);
 
   // console.log("Consumed " + finalSteamConsumption.toFixed(10) + " steam!");
 
