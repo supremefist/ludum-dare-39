@@ -97,6 +97,23 @@ LD39.TrainTrack.prototype.getTrackPhysicsObjects = function(sprites) {
   return pads;
 }
 
+LD39.TrainTrack.prototype.getBoundingRectangle = function() {
+  var minX = Infinity;
+  var maxX = 0;
+
+  var minY = Infinity;
+  var maxY = 0;
+
+  for (var index = 0; index < this.points.length; index++) {
+    minX = Math.min(this.points[index].x, minX);
+    maxX = Math.max(this.points[index].x, maxX);
+    minY = Math.min(this.points[index].y, minY);
+    maxY = Math.max(this.points[index].y, maxY);
+  }
+
+  return new PIXI.Rectangle(minX, minY, maxX - minX, maxY - minY);
+}
+
 LD39.TrainTrack.prototype.getSegmentsAtIndex = function(index) {
   if (index < 0) {
     return {

@@ -176,7 +176,40 @@ LD39.BaseLevel.prototype.createInterface = function() {
   this.stage.addChild(this.interfaceStage);
 }
 
+LD39.BaseLevel.prototype.createSky = function() {
+  var trackRectangle = this.track.getBoundingRectangle();
+
+  var cloudScapeX = trackRectangle.x;
+  var cloudScapeY = trackRectangle.y - 400;
+  var cloudScapeWidth = trackRectangle.width;
+  var cloudScapeHeight = trackRectangle.height + 400;
+
+  // var cloudScapeX = -800;
+  // var cloudScapeY = -800;
+  // var cloudScapeWidth = 1600;
+  // var cloudScapeHeight = 1600;
+
+  var baseCloudDensity = 200;
+  var baseCloudDensityVariance = 0.2;
+  var cloudDensity = baseCloudDensity * (1.0 + (Math.random() * baseCloudDensityVariance - baseCloudDensityVariance / 2));
+  var cloudCount = cloudScapeWidth / cloudDensity;
+  console.log(cloudCount);
+
+  var cloudStage = new PIXI.Container();
+  for (var index = 0; index < cloudCount; index++) {
+    var cloudX = cloudScapeX + cloudScapeWidth * Math.random();
+    var cloudY = cloudScapeY + cloudScapeHeight * Math.random();
+
+    var cloud = new LD39.CloudEntity();
+    cloud.setPosition(cloudX, cloudY);
+    this.worldStage.addChild(cloud.sprite);
+  }
+
+  // this.stage.addChild(cloudStage);
+}
+
 LD39.BaseLevel.prototype.createVisibleWorld = function() {
+  this.createSky();
   this.createStation();
   this.createGround();
 }
