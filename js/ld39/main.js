@@ -54,8 +54,17 @@ LD39.loadResources = function() {
   PIXI.loader
     .add('graphics/train', 'resources/graphics/train.png')
     .add('graphics/buildings', 'resources/graphics/buildings.png')
-    .add('sounds/bump_b', 'resources/sounds/bump_b.wav')
-    .add('sounds/bump_c', 'resources/sounds/bump_c.wav')
+    .add('graphics/instructions', 'resources/graphics/instructions.png')
+
+    .add('sounds/engine_a', 'resources/sounds/engine_a.wav')
+    .add('sounds/engine_b', 'resources/sounds/engine_b.wav')
+    .add('sounds/explosion', 'resources/sounds/explosion.wav')
+
+    .add('sounds/alarm', 'resources/sounds/alarm.wav')
+
+    .add('sounds/burn_a', 'resources/sounds/burn_a.wav')
+    .add('sounds/burn_b', 'resources/sounds/burn_b.wav')
+    .add('sounds/burn_c', 'resources/sounds/burn_c.wav')
     // .add('music/main', 'resources/music/the_jaunt.mp3')
     .load(LD39.loadingCompleted);
 

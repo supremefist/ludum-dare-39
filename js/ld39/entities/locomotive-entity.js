@@ -9,6 +9,17 @@ LD39.LocomotiveEntity = function() {
 
   var trainSprite = new PIXI.Container();
 
+  this.baseBurnCycleTime = 500;
+  this.burnCycleTimeVariance = 0.8;
+  this.burnCycleTime = this.baseBurnCycleTime;
+
+  this.baseEngineCycleTime = 0;
+  this.engineSoundCycleTime = 0;
+  this.useAlternateSound = true;
+
+  this.baseAlarmCycleTime = 1000;
+  this.alarmCycleTime = 0;
+
   var coalBurnTime = 0;
   var steamBurnTime = 0;
   this.currentParameters = {
@@ -92,12 +103,75 @@ LD39.LocomotiveEntity.prototype.update = function(delta) {
   this.smokeFactory.setSmokePosition(position.x + 15, position.y - 15);
   // this.smokeFactory.setSmokePosition(400, -200);
   this.smokeFactory.update(delta);
+
+  this.playCurrentEngineSound(delta);
+  if (this.currentParameters.steam > 1.0) {
+    this.playAlarmSound(delta);
+  } else {
+    this.alarmCycleTime = 0;
+  }
 }
+
+LD39.LocomotiveEntity.prototype.playCurrentEngineSound = function(delta) {
+  if (this.baseEngineCycleTime > 0) {
+    this.engineSoundCycleTime -= delta;
+
+    if (this.engineSoundCycleTime < 0) {
+      if (this.useAlternateSound) {
+        PIXI.loader.resources['sounds/engine_a'].sound.play();
+        this.useAlternateSound = false;
+      } else {
+        PIXI.loader.resources['sounds/engine_b'].sound.play();
+        this.useAlternateSound = true;
+      }
+
+      this.engineSoundCycleTime = this.baseEngineCycleTime;
+    }
+  }
+}
+
+LD39.LocomotiveEntity.prototype.playBurnSound = function(delta) {
+  if (this.burnCycleTime > 0) {
+    this.burnCycleTime -= delta
+
+    if (this.burnCycleTime < 0) {
+      var playedSound = Math.floor(Math.random() * 3);
+      var burnSound = null;
+      if (playedSound == 0) {
+        burnSound = PIXI.loader.resources['sounds/burn_a'].sound;
+      } else if (playedSound == 1) {
+        burnSound = PIXI.loader.resources['sounds/burn_b'].sound;
+      } else {
+        burnSound = PIXI.loader.resources['sounds/burn_b'].sound;
+      }
+
+      burnSound.volume = 0.2;
+      burnSound.play();
+
+      this.burnCycleTime = this.baseBurnCycleTime * (1.0 + (Math.random() - 0.5) * this.burnCycleTimeVariance);
+    }
+  } else {
+    this.burnCycleTime = this.baseBurnCycleTime;
+  }
+}
+
+LD39.LocomotiveEntity.prototype.playAlarmSound = function(delta) {
+  if (this.alarmCycleTime >= 0) {
+    this.alarmCycleTime -= delta;
+
+    if (this.alarmCycleTime <= 0) {
+      PIXI.loader.resources['sounds/alarm'].sound.play();
+    }
+  } else {
+    this.alarmCycleTime = this.baseAlarmCycleTime;
+  }
+}
+
 
 LD39.LocomotiveEntity.prototype.processResources = function(delta) {
   var baseDuration = 50000;
 
-  var burnToSteamRatio = 0.1;
+  var burnToSteamRatio = 0.15;
   var steamToEngineRatio = 2;
 
   var fullBurningDuration = baseDuration;
@@ -108,6 +182,7 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
   var burnAmount = delta / fullBurningDuration;
 
   if (this.currentParameters['burningCoal'] >= burnAmount) {
+    this.playBurnSound(delta);
     this.currentParameters['burningCoal'] -= burnAmount;
     this.currentParameters.changes['burningCoal'] -= burnAmount;
 
@@ -126,56 +201,67 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
   var idleValue = 0.3;
 
   var finalTorque = 0;
-  var throttleValue = this.currentParameters['throttle'];
+  var throttleValue = this.currentParameters.throttle;
 
   var finalSteamConsumption = 0;
   var movementMultiplier = 0;
   var effectiveThrottle = idleValue;
 
-  if (this.currentParameters['steam'] > 0.05) {
-    var steamConsumptionAmount = delta / fullSteamUseDuration;
+  var steamConsumptionAmount = delta / fullSteamUseDuration;
 
-    var sliderConstant = 0.2;
-    var torqueConstant = 2;
-    var finalSteamConsumption = 0;
+  var sliderConstant = 0.2;
+  var torqueConstant = 2;
+  var finalSteamConsumption = 0;
 
-    if (throttleValue > idleValue) {
-      // Try to burn forward
-      movementMultiplier = (throttleValue - idleValue) / sliderConstant;
-      var maxMovementMultiplier = Math.round(Math.min(3, Math.floor(this.currentParameters['steam'] / steamConsumptionAmount)));
+  var maxMovementMultiplier = 0;
+  if (this.currentParameters.steam > 0.4) {
+    maxMovementMultiplier = 3;
+  } else if (this.currentParameters.steam > 0.2) {
+    maxMovementMultiplier = 2;
+  } else if (this.currentParameters.steam > 0) {
+    maxMovementMultiplier = 1;
+  }
 
-      movementMultiplier = Math.round(Math.min(movementMultiplier, maxMovementMultiplier));
+  if (throttleValue > idleValue) {
+    // Try to burn forward
+    movementMultiplier = (throttleValue - idleValue) / sliderConstant;
+    movementMultiplier = Math.min(movementMultiplier, maxMovementMultiplier);
 
-      // console.log("Final forward multiplier: " + movementMultiplier);
-      effectiveThrottle = (movementMultiplier * sliderConstant) + idleValue;
+    // console.log("Final forward multiplier: " + movementMultiplier);
+    effectiveThrottle = (movementMultiplier * sliderConstant) + idleValue;
 
-      finalSteamConsumption = steamConsumptionAmount * movementMultiplier;
+    finalSteamConsumption = steamConsumptionAmount * movementMultiplier;
 
-      finalTorque = throttleMultiplier * movementMultiplier * sliderConstant * torqueConstant;
-    } else if (throttleValue < idleValue) {
-      // Try to burn backward
-      movementMultiplier = Math.round((idleValue - throttleValue) / sliderConstant);
-      var maxMovementMultiplier = Math.round(Math.min(1, Math.floor(this.currentParameters['steam'] / steamConsumptionAmount)));
+    finalTorque = throttleMultiplier * movementMultiplier * sliderConstant * torqueConstant;
+  } else if (throttleValue < idleValue) {
+    // Try to burn backward
+    maxMovementMultiplier = Math.min(1, maxMovementMultiplier);
+    movementMultiplier = (idleValue - throttleValue) / sliderConstant;
+    movementMultiplier = Math.min(movementMultiplier, maxMovementMultiplier);
 
-      movementMultiplier = Math.min(movementMultiplier, maxMovementMultiplier);
+    effectiveThrottle = idleValue - (movementMultiplier * sliderConstant);
+    finalSteamConsumption = steamConsumptionAmount * movementMultiplier;
+    finalTorque = -1.0 * throttleMultiplier * movementMultiplier * sliderConstant * torqueConstant;
+  }
 
-      effectiveThrottle = idleValue - (movementMultiplier * sliderConstant);
-      finalSteamConsumption = steamConsumptionAmount * movementMultiplier;
-      finalTorque = -1.0 * throttleMultiplier * movementMultiplier * sliderConstant * torqueConstant;
-    }
+  movementMultiplier = Math.round(movementMultiplier);
 
-    if (movementMultiplier == 1) {
-      finalSteamConsumption *= 0.7;
-    } else if (movementMultiplier == 2) {
-      finalSteamConsumption *= 1.1;
-    } else if (movementMultiplier == 3) {
-      finalSteamConsumption *= 1.5;
-    }
+  if (movementMultiplier == 0) {
+    this.baseEngineCycleTime = 0;
+  } else if (movementMultiplier == 1) {
+    this.baseEngineCycleTime = 400;
+    finalSteamConsumption *= 0.7;
+  } else if (movementMultiplier == 2) {
+    this.baseEngineCycleTime = 300;
+    finalSteamConsumption *= 1.1;
+  } else if (movementMultiplier == 3) {
+    this.baseEngineCycleTime = 200;
+    finalSteamConsumption *= 1.5;
+  }
 
-    if (finalSteamConsumption > 0) {
-      this.currentParameters['steam'] -= finalSteamConsumption;
-      this.currentParameters.changes['steam'] -= finalSteamConsumption;
-    }
+  if (finalSteamConsumption > 0) {
+    this.currentParameters['steam'] -= finalSteamConsumption;
+    this.currentParameters.changes['steam'] -= finalSteamConsumption;
   }
 
   this.effectiveThrottleBuffer.push(effectiveThrottle);
@@ -218,6 +304,7 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
     this.physicsBody.bodies[1].torque = finalTorque;
     this.physicsBody.bodies[2].torque = finalTorque;
   }
+
   // console.log(this.currentParameters['steam'] + ": " + finalTorque);
 }
 
@@ -274,7 +361,7 @@ LD39.LocomotiveEntity.prototype.decelerate = function() {
 
 LD39.LocomotiveEntity.prototype.feedCoal = function() {
 
-  var coalConsumption = 0.1;
+  var coalConsumption = 0.2;
   var burningCoalIncrement = 0.25;
 
   if (this.currentParameters['coal'] < coalConsumption) {

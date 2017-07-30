@@ -118,10 +118,10 @@ LD39.BaseLevel.prototype.updateHelpMessage = function() {
     this.additionalHelperTextEntity.setText("Throttle forward to release steam!");
   } else if (steamAmount < 0.05) {
     this.helperTextEntity.setText("Low steam!");
-    if ((throttling) && (inefficient)) {
-      this.additionalHelperTextEntity.setText("Not at full power! Lower throttle to use less steam!");
-    } else if (burningCoalAmount < 0.2) {
+    if (burningCoalAmount < 0.2) {
       this.additionalHelperTextEntity.setText("Press 'right' to shovel coal.");
+    } else if ((throttling) && (inefficient)) {
+      this.additionalHelperTextEntity.setText("Not at full power! Lower throttle to use less steam!");
     }
   } else if (burningCoalAmount > 0.95) {
     this.helperTextEntity.setText("Combustion chamber full!");
@@ -345,6 +345,10 @@ LD39.BaseLevel.prototype.createEntities = function() {
   this.locomotiveEntity.addToStage(this.worldStage);
 }
 
+LD39.BaseLevel.prototype.playExplosion = function() {
+  PIXI.loader.resources['sounds/explosion'].sound.play();
+}
+
 LD39.BaseLevel.prototype.getPlayerState = function() {
   if (this.idleDuration > 0) {
     return {
@@ -359,19 +363,22 @@ LD39.BaseLevel.prototype.getPlayerState = function() {
   var minAllowableY = Math.max(currentSegments.start.y, currentSegments.end.y);
 
   if (this.locomotiveEntity.currentParameters.steam > 1.5) {
+    this.playExplosion();
     return {
       state: "dead",
       reason: "Killed by steam chamber explosion."
     }
   } else if ((this.currentTrackSegmentIndex < 0) || (this.currentTrackSegmentIndex >= trackSegmentCount - 1)) {
+    this.playExplosion();
     return {
       state: "dead",
       reason: "Killed by catastrophic collision."
     }
   } else if (currentLocomotiveY > minAllowableY) {
+    this.playExplosion();
     return {
       state: "dead",
-      reason: "Fell to your death."
+      reason: "You fell to your death."
     }
   } else if ((this.currentTrackSegmentIndex == trackSegmentCount - 4) && (this.locomotiveEntity.isStationary())) {
     return {

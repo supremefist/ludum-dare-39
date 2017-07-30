@@ -38,6 +38,10 @@ LD39.TrainTrack.prototype.addTrackPoint = function(deltaX, deltaY, type, buildin
   });
 }
 
+LD39.TrainTrack.prototype.addWarning = function(warningString) {
+  
+}
+
 LD39.TrainTrack.prototype.getLevelPoints = function() {
   return this.points;
 }

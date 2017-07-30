@@ -15,7 +15,7 @@ LD39.SuccessScreen = function(playerState) {
   successReasonMessage = new LD39.TextEntity("", 16, 0xffffff);
   this.stage.addChild(successReasonMessage.sprite);
 
-  nextStepsMessage = new LD39.TextEntity("Press 'ENTER' to continue...", 16, 0xffffff);
+  nextStepsMessage = new LD39.TextEntity("Press 'ENTER' to play again!", 16, 0xffffff);
   this.stage.addChild(nextStepsMessage.sprite);
 
   if (playerState != undefined) {

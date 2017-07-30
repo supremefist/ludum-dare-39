@@ -61,6 +61,8 @@ LD39.TrainRideScreen.prototype.update = function(delta) {
 
 LD39.TrainRideScreen.prototype.initialize = function() {
   LD39.Screen.prototype.initialize.call(this);
+
+  PIXI.loader.resources['sounds/explosion'].sound.stop();
 }
 
 LD39.TrainRideScreen.prototype.terminate = function() {
