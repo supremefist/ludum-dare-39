@@ -55,8 +55,43 @@ LD39.BaseLevel.prototype.update = function(delta) {
 
   this.updateCurrentTrackSegment();
   this.updateHelpMessage();
+  this.updateIndicators();
 }
 
+LD39.BaseLevel.prototype.updateIndicators = function() {
+  var changes = this.locomotiveEntity.currentParameters.changes;
+  
+  if ("coal" in changes) {
+    if (changes.coal > 0) {
+      this.coalBarEntity.indicateUp();
+    } else {
+      this.coalBarEntity.indicateDown();
+    }
+
+    delete changes['coal'];
+  }
+
+  if ("burningCoal" in changes) {
+    if (changes.burningCoal > 0) {
+      this.burningCoalBarEntity.indicateUp();
+    } else {
+      this.burningCoalBarEntity.indicateDown();
+    }
+
+    delete changes['burningCoal'];
+  }
+
+  if ("steam" in changes) {
+    if (changes.steam > 0) {
+      this.steamBarEntity.indicateUp();
+    } else {
+      this.steamBarEntity.indicateDown();
+    }
+
+    delete changes['steam'];
+  }
+
+}
 LD39.BaseLevel.prototype.updateHelpMessage = function() {
   var coalAmount = this.locomotiveEntity.currentParameters.coal;
   var burningCoalAmount = this.locomotiveEntity.currentParameters.burningCoal;

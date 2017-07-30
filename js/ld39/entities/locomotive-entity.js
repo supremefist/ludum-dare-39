@@ -16,7 +16,8 @@ LD39.LocomotiveEntity = function() {
     "burningCoal": 0.0,
     "steam": 0.0,
     "throttle": 0.3,
-    "effectiveThrottle": 0.3
+    "effectiveThrottle": 0.3,
+    "changes": []
   };
 
   this.braking = false;
@@ -104,8 +105,13 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
 
   if (this.currentParameters['burningCoal'] >= burnAmount) {
     this.currentParameters['burningCoal'] -= burnAmount;
+    this.currentParameters.changes['burningCoal'] = -burnAmount;
+
     var generatedSteamAmount = delta / fullSteamGenerationDuration;
-    this.currentParameters['steam'] += generatedSteamAmount;
+    if (generatedSteamAmount > 0) {
+      this.currentParameters['steam'] += generatedSteamAmount;
+      this.currentParameters.changes['steam'] = generatedSteamAmount;
+    }
     // console.log("Generated " + generatedSteamAmount.toFixed(10) + " steam!");
     // console.log(this.currentParameters['steam']);
   }
@@ -154,7 +160,20 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
       finalTorque = -1.0 * throttleMultiplier * movementMultiplier * sliderConstant * torqueConstant;
     }
 
-    this.currentParameters['steam'] -= finalSteamConsumption;
+    if (finalSteamConsumption > 0) {
+      this.currentParameters['steam'] -= finalSteamConsumption;
+      if (this.currentParameters.changes.steam != undefined) {
+        this.currentParameters.changes['steam'] -= finalSteamConsumption;
+      } else {
+        this.currentParameters.changes['steam'] = -finalSteamConsumption;
+      }
+    }
+
+    if ("steam" in this.currentParameters.changes) {
+      if (Math.abs(this.currentParameters.changes.steam) < 0.00001) {
+        delete this.currentParameters.changes.steam;
+      }
+    }
   }
 
   this.effectiveThrottleBuffer.push(effectiveThrottle);
@@ -267,7 +286,10 @@ LD39.LocomotiveEntity.prototype.feedCoal = function() {
   }
 
   this.currentParameters['coal'] -= coalConsumption;
+  this.currentParameters.changes['coal'] = -coalConsumption
+
   this.currentParameters['burningCoal'] += burningCoalIncrement;
+  this.currentParameters.changes['burningCoal'] = burningCoalIncrement
 }
 
 LD39.LocomotiveEntity.prototype.applyBrakes = function() {
