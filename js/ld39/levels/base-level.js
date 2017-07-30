@@ -282,20 +282,27 @@ LD39.BaseLevel.prototype.createEntities = function() {
 }
 
 LD39.BaseLevel.prototype.getPlayerState = function() {
+  var trackSegmentCount = this.track.points.length;
   if (this.locomotiveEntity.currentParameters.steam > 1.5) {
     return {
       state: "dead",
       reason: "Killed by steam chamber explosion."
     }
-  } else if ((this.currentTrackSegmentIndex < 0) || (this.currentTrackSegmentIndex >= this.track.points.length - 1)) {
+  } else if ((this.currentTrackSegmentIndex < 0) || (this.currentTrackSegmentIndex >= trackSegmentCount - 1)) {
     return {
       state: "dead",
       reason: "Killed by catastrophic collision."
     }
-  }
-  return {
-    state: "alive",
-    reason: "Healthy."
+  } else if ((this.currentTrackSegmentIndex == trackSegmentCount - 4) && (this.locomotiveEntity.isStationary())) {
+    return {
+      state: "done",
+      reason: "You delivered your cargo!"
+    }
+  } else {
+    return {
+      state: "busy",
+      reason: "Healthy."
+    }
   }
 }
 

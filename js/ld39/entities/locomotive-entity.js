@@ -63,6 +63,14 @@ LD39.LocomotiveEntity.prototype.addToStage = function(stage) {
   stage.addChild(this.smokeFactory.stage);
 }
 
+LD39.LocomotiveEntity.prototype.isStationary = function() {
+  var xMovement = Math.abs(this.physicsBody.bodies[0].velocity.x) > 0.1;
+  var yMovement = Math.abs(this.physicsBody.bodies[0].velocity.y) > 0.1;
+
+  return !xMovement && !yMovement;
+}
+
+
 LD39.LocomotiveEntity.prototype.update = function(delta) {
   LD39.Entity.prototype.update.call(this, delta);
 
@@ -169,7 +177,7 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
   // console.log("Consumed " + finalSteamConsumption.toFixed(10) + " steam!");
 
   if (this.braking) {
-    if (Math.abs(this.physicsBody.bodies[0].velocity.x) > 0.1) {
+    if (!this.isStationary()) {
       // Active braking
       var brakeTorque = 0.0025;
 

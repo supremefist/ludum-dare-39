@@ -35,6 +35,13 @@ LD39.TrainRideScreen.prototype.update = function(delta) {
 
     LD39.setCurrentScreen(new LD39.DeathScreen(playerState));
 
+  } else if (playerState.state == 'done') {
+    if (this.overlay != null) {
+      return;
+    }
+
+    LD39.setCurrentScreen(new LD39.DeathScreen(playerState));
+
   } else {
     LD39.Screen.prototype.update.call(this, delta);
     this.level.update(delta);

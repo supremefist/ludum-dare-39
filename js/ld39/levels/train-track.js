@@ -4,29 +4,37 @@ LD39.TrainTrack = function() {
   this.points = [];
   this.currentPoints = null;
 
-  this.insertStart();
+  this.addStart();
 }
 
-LD39.TrainTrack.prototype.insertStart = function() {
-  this.addTrackPoint(-400, -200, "ground", null);
-  this.addTrackPoint(-200, -200, "ground", null);
-  this.addTrackPoint(-200, 0, "ground", null);
-  this.addTrackPoint(200, 0, "ground", "station");
+LD39.TrainTrack.prototype.addStart = function() {
+  this.points = [{
+    x: -400,
+    y: -200,
+    type: "ground",
+    building: null
+  }];
+
+  this.addTrackPoint(200, 0, "ground", null);
+  this.addTrackPoint(0, 200, "ground", null);
+  this.addTrackPoint(400, 0, "ground", "station");
 }
 
-LD39.TrainTrack.prototype.insertStart = function() {
-  this.addTrackPoint(-400, -200, "ground", null);
-  this.addTrackPoint(-200, -200, "ground", null);
-  this.addTrackPoint(-200, 0, "ground", null);
-  this.addTrackPoint(200, 0, "ground", "station");
+LD39.TrainTrack.prototype.addEnd = function() {
+  this.addTrackPoint(800, 0, "ground", "station");
+  this.addTrackPoint(0, -200, "ground", null);
+  this.addTrackPoint(800, -400, "ground", null);
+
 }
 
-LD39.TrainTrack.prototype.addTrackPoint = function(x, y, type, building) {
+LD39.TrainTrack.prototype.addTrackPoint = function(deltaX, deltaY, type, building) {
+  var previousPoint = this.points[this.points.length - 1];
+
   this.points.push({
     type: type,
     building: building,
-    x: x,
-    y: y
+    x: previousPoint.x + deltaX,
+    y: previousPoint.y + deltaY
   });
 }
 
