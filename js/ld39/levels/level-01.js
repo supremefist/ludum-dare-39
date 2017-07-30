@@ -12,12 +12,13 @@ LD39.Level01.prototype.createTrack = function() {
 
   this.track = new LD39.TrainTrack();
 
-  this.track.addTrackPoint(400, 50);
-  this.track.addTrackPoint(800, 120);
-  this.track.addTrackPoint(1300, 170);
-  this.track.addTrackPoint(2000, 250);
-  this.track.addBridgePoint(2400, 250);
-  this.track.addTrackPoint(2800, 150);
-  this.track.addTrackPoint(3300, 0);
-  this.track.addTrackPoint(3600, 0);
+  this.track.addTrackPoint(400, 50, "ground", null);
+  this.track.addTrackPoint(800, 120, "ground", null);
+  this.track.addTrackPoint(800, 120, "ground", null);
+  this.track.addTrackPoint(1300, 170, "ground", null);
+  this.track.addTrackPoint(2000, 250, "ground", null);
+  this.track.addTrackPoint(2400, 250, "bridge", null);
+  this.track.addTrackPoint(2800, 150, "ground", null);
+  this.track.addTrackPoint(3300, 0, "ground", "station");
+  this.track.addTrackPoint(3600, 0, "ground", null);
 }

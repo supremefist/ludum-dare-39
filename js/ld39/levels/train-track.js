@@ -1,21 +1,30 @@
 var LD39 = LD39 || {};
 
 LD39.TrainTrack = function() {
-  this.points = [new PIXI.Point(-400, -200), new PIXI.Point(-200, -200), new PIXI.Point(-200, 0), new PIXI.Point(200, 0)];
+  this.points = [];
   this.currentPoints = null;
+
+  this.insertStart();
 }
 
-LD39.TrainTrack.prototype.addTrackPoint = function(x, y) {
-  this.points.push({
-    type: "ground",
-    x: x,
-    y: y
-  });
+LD39.TrainTrack.prototype.insertStart = function() {
+  this.addTrackPoint(-400, -200, "ground", null);
+  this.addTrackPoint(-200, -200, "ground", null);
+  this.addTrackPoint(-200, 0, "ground", null);
+  this.addTrackPoint(200, 0, "ground", "station");
 }
 
-LD39.TrainTrack.prototype.addBridgePoint = function(x, y) {
+LD39.TrainTrack.prototype.insertStart = function() {
+  this.addTrackPoint(-400, -200, "ground", null);
+  this.addTrackPoint(-200, -200, "ground", null);
+  this.addTrackPoint(-200, 0, "ground", null);
+  this.addTrackPoint(200, 0, "ground", "station");
+}
+
+LD39.TrainTrack.prototype.addTrackPoint = function(x, y, type, building) {
   this.points.push({
-    type: "strong-bridge",
+    type: type,
+    building: building,
     x: x,
     y: y
   });
@@ -49,6 +58,26 @@ LD39.TrainTrack.prototype.getTrackPhysicsSpriteForPoints = function(startPoint, 
   rectangleSprite.position.set(x, y);
 
   return rectangleSprite;
+}
+
+LD39.TrainTrack.prototype.getBuildingLocations = function() {
+  var locations = [];
+  for (var index = 0; index < this.points.length - 1; index++) {
+    var segments = this.getSegmentsAtIndex(index);
+
+    if (segments.end.building != null) {
+      var buildingBaseX = (segments.start.x + segments.end.x) / 2.0;
+      var buildingBaseY = (segments.start.y + segments.end.y) / 2.0;
+
+      locations.push({
+        type: segments.end.building,
+        x: buildingBaseX,
+        y: buildingBaseY
+      });
+    }
+  }
+
+  return locations;
 }
 
 LD39.TrainTrack.prototype.getTrackPhysicsBodyForPoints = function(startPoint, endPoint, height) {

@@ -1,5 +1,14 @@
 var LD39 = LD39 || {};
 
+/*
+- Basic uphill and downhill
+- Long slow uphill, breakable wall
+- Flat, slow bridge
+- Downhill, forced stop
+- Breakable wall, steep hill, downhill forced stop, jump
+
+*/
+
 LD39.BaseLevel = function(stage) {
   this.stage = stage;
   this.worldStage = new PIXI.Container();
@@ -117,15 +126,27 @@ LD39.BaseLevel.prototype.createGround = function() {
   }
 }
 
-LD39.BaseLevel.prototype.createStation = function() {
-  var texture = PIXI.loader.resources["graphics/buildings"].texture;
-  var stationTexture = new PIXI.Texture(
-    texture, new PIXI.Rectangle(1, 1, 128, 64));
-  var stationSprite = new PIXI.Sprite(stationTexture);
-  stationSprite.position.set(32, -64);
-  stationSprite.anchor.set(0.5, 0.5);
-  stationSprite.scale.set(2.0, 2.0);
-  this.worldStage.addChild(stationSprite);
+LD39.BaseLevel.prototype.createBuildings = function() {
+  var buildingLocations = this.track.getBuildingLocations();
+  for (var index = 0; index < buildingLocations.length; index++) {
+    var buildingLocation = buildingLocations[index];
+
+    if (buildingLocation.type == 'station') {
+      var texture = PIXI.loader.resources["graphics/buildings"].texture;
+      var stationTexture = new PIXI.Texture(
+        texture, new PIXI.Rectangle(1, 1, 128, 64));
+      var stationSprite = new PIXI.Sprite(stationTexture);
+      stationSprite.position.set(buildingLocation.x, buildingLocation.y - 64);
+      // stationSprite.position.set(32, -64);
+      stationSprite.anchor.set(0.5, 0.5);
+      stationSprite.scale.set(2.0, 2.0);
+      this.worldStage.addChild(stationSprite);
+    } else {
+      console.log("Invalid building type: " + buildingLocation.type);
+    }
+
+  }
+
 }
 
 LD39.BaseLevel.prototype.updateCamera = function() {
@@ -209,7 +230,7 @@ LD39.BaseLevel.prototype.createSky = function() {
 
 LD39.BaseLevel.prototype.createVisibleWorld = function() {
   this.createSky();
-  this.createStation();
+  this.createBuildings();
   this.createGround();
 }
 
