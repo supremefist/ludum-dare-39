@@ -15,7 +15,8 @@ LD39.LocomotiveEntity = function() {
     "coal": 1.0,
     "burningCoal": 0.0,
     "steam": 0.0,
-    "throttle": 0.3
+    "throttle": 0.3,
+    "effectiveThrottle": 0.3
   };
 
   this.wheelSprites = [];
@@ -50,6 +51,7 @@ LD39.LocomotiveEntity = function() {
   this.setSprite(trainSprite);
 
   this.smokeFactory = new LD39.SmokeFactory();
+  this.effectiveThrottleBuffer = [];
 }
 
 LD39.LocomotiveEntity.prototype = Object.create(LD39.Entity.prototype);
@@ -109,6 +111,7 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
 
   var finalSteamConsumption = 0;
   var movementMultiplier = 0;
+  var effectiveThrottle = idleValue;
 
   if (this.currentParameters['steam'] > 0.05) {
     var steamConsumptionAmount = delta / fullSteamUseDuration;
@@ -127,6 +130,8 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
       // console.log("Final forward multiplier: " + movementMultiplier);
       finalSteamConsumption = steamConsumptionAmount * movementMultiplier;
 
+      effectiveThrottle = (movementMultiplier * sliderConstant) + idleValue;
+
       finalTorque = throttleMultiplier * movementMultiplier * sliderConstant * torqueConstant;
     } else if (throttleValue < idleValue) {
       // Try to burn backward
@@ -135,6 +140,7 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
 
       movementMultiplier = Math.min(movementMultiplier, maxMovementMultiplier);
 
+      effectiveThrottle = idleValue - (movementMultiplier * sliderConstant);
       finalSteamConsumption = steamConsumptionAmount * movementMultiplier;
       finalTorque = -1.0 * throttleMultiplier * movementMultiplier * sliderConstant * torqueConstant;
     }
@@ -142,6 +148,21 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
     this.currentParameters['steam'] -= finalSteamConsumption;
   }
 
+  this.effectiveThrottleBuffer.push(effectiveThrottle);
+
+  var bufferSize = 50;
+  if (this.effectiveThrottleBuffer.length > bufferSize) {
+    this.effectiveThrottleBuffer = this.effectiveThrottleBuffer.slice(this.effectiveThrottleBuffer.length - bufferSize, this.effectiveThrottleBuffer.length);
+  }
+
+  var totalEffectiveThrottle = 0;
+  var effectiveThrottleCount = 0;
+  for (var index = 0; index < this.effectiveThrottleBuffer.length; index++) {
+    totalEffectiveThrottle += this.effectiveThrottleBuffer[index];
+    effectiveThrottleCount += 1;
+  }
+
+  this.currentParameters['effectiveThrottle'] = totalEffectiveThrottle / effectiveThrottleCount;
   this.smokeFactory.updateSmokeOutput(movementMultiplier);
 
   // console.log("Consumed " + finalSteamConsumption.toFixed(10) + " steam!");

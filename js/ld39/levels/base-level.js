@@ -35,7 +35,9 @@ LD39.BaseLevel.prototype.update = function(delta) {
   this.steamBarEntity.update(delta);
 
   var throttle = this.locomotiveEntity.currentParameters['throttle'];
+  var effectiveThrottle = this.locomotiveEntity.currentParameters['effectiveThrottle'];
   this.throttleBarEntity.setProgress(throttle);
+  this.throttleBarEntity.effectiveProgressValue = effectiveThrottle;
   this.throttleBarEntity.update(delta);
 
   this.locomotiveEntity.setThrottle(throttle);

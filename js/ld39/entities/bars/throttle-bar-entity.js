@@ -3,6 +3,7 @@ var LD39 = LD39 || {};
 LD39.ThrottleBarEntity = function() {
   LD39.BarEntity.call(this);
 
+  this.effectiveProgressValue = 0.3;
   this.progressValue = 0.3;
 
   var barSprite = new PIXI.Container();
@@ -30,16 +31,26 @@ LD39.ThrottleBarEntity = function() {
 
   this.totalBarHeight = currentY;
 
-  var line = new PIXI.Graphics();
-  line.lineStyle(4, 0x000000, 1);
+  var powerLine = new PIXI.Graphics();
+  powerLine.lineStyle(4, 0x000000, 1);
   var sideOverFlow = 0.1;
-  line.moveTo(-this.barWidth * sideOverFlow, 0);
-  line.lineTo(this.barWidth * (1.0 + sideOverFlow), 0);
-  line.x = 0;
-  line.y = 0;
-  barSprite.addChild(line);
+  powerLine.moveTo(-this.barWidth * sideOverFlow, 0);
+  powerLine.lineTo(this.barWidth * (1.0 + sideOverFlow), 0);
+  powerLine.alpha = 0.5;
+  powerLine.x = 0;
+  powerLine.y = 0;
+  barSprite.addChild(powerLine);
+  this.powerLine = powerLine;
 
-  this.barLine = line;
+  var goalLine = new PIXI.Graphics();
+  goalLine.lineStyle(4, 0x000000, 1);
+  var sideOverFlow = 0.1;
+  goalLine.moveTo(-this.barWidth * sideOverFlow, 0);
+  goalLine.lineTo(this.barWidth * (1.0 + sideOverFlow), 0);
+  goalLine.x = 0;
+  goalLine.y = 0;
+  barSprite.addChild(goalLine);
+  this.goalLine = goalLine;
 
   this.sprite = barSprite;
 }
@@ -50,5 +61,6 @@ LD39.ThrottleBarEntity.prototype.constructor = LD39.ThrottleBarEntity;
 LD39.ThrottleBarEntity.prototype.update = function(delta) {
   LD39.BarEntity.prototype.update.call(this, delta);
 
-  this.barLine.position.set(0, this.totalBarHeight * (1.0 - this.getProgress()));
+  this.powerLine.position.set(0, this.totalBarHeight * (1.0 - this.effectiveProgressValue));
+  this.goalLine.position.set(0, this.totalBarHeight * (1.0 - this.getProgress()));
 }
