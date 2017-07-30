@@ -3,6 +3,7 @@ var LD39 = LD39 || {};
 LD39.Screen = function(world) {
   this.stage = new PIXI.Container();
   this.musicResource = null;
+  this.eventListeners = [];
 }
 
 LD39.Screen.prototype.update = function(delta) {
@@ -15,6 +16,10 @@ LD39.Screen.prototype.render = function(renderer) {
 LD39.Screen.prototype.initializeKeyboard = function() {
 }
 
+LD39.Screen.prototype.clearKeyboard = function() {
+
+}
+
 LD39.Screen.prototype.initialize = function() {
   this.initializeKeyboard();
 
@@ -24,8 +29,18 @@ LD39.Screen.prototype.initialize = function() {
 }
 
 LD39.Screen.prototype.terminate = function() {
+  this.clearEventListeners();
+
   if (this.musicResource != null) {
     PIXI.loader.resources[this.musicResource].sound.stop();
+  }
+}
+
+LD39.Screen.prototype.clearEventListeners = function() {
+  for (var index = 0; index < this.eventListeners.length; index++) {
+    var eventListener = this.eventListeners[index];
+
+    window.removeEventListener(eventListener.type, eventListener.handler, eventListener.useCapture);
   }
 }
 
@@ -57,11 +72,27 @@ LD39.Screen.prototype.keyboard = function(keyCode) {
   };
 
   //Attach event listeners
+  downEvent = {
+    "type": "keydown",
+    "handler": key.downHandler.bind(key),
+    "useCapture": false
+  }
   window.addEventListener(
-    "keydown", key.downHandler.bind(key), false
+    downEvent.type, downEvent.handler, downEvent.useCapture
   );
+  this.eventListeners.push(downEvent);
+
+  upEvent = {
+    "type": "keyup",
+    "handler": key.upHandler.bind(key),
+    "useCapture": false
+  }
   window.addEventListener(
-    "keyup", key.upHandler.bind(key), false
+    upEvent.type, upEvent.handler, upEvent.useCapture
   );
+  this.eventListeners.push(upEvent);
+
+
+
   return key;
 }

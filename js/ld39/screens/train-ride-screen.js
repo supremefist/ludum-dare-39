@@ -15,8 +15,6 @@ LD39.TrainRideScreen.prototype.constructor = LD39.TrainRideScreen;
 
 LD39.TrainRideScreen.prototype.createLevel = function() {
   this.level = new LD39.Level01(this.stage);
-
-  this.initializeKeyboard();
 }
 
 LD39.TrainRideScreen.prototype.render = function(renderer) {
@@ -42,8 +40,12 @@ LD39.TrainRideScreen.prototype.update = function(delta) {
   }
 }
 
-LD39.TrainRideScreen.prototype.initialize = function(delta) {
-  LD39.Screen.prototype.initialize.call(this, delta);
+LD39.TrainRideScreen.prototype.initialize = function() {
+  LD39.Screen.prototype.initialize.call(this);
+}
+
+LD39.TrainRideScreen.prototype.terminate = function() {
+  LD39.Screen.prototype.terminate.call(this);
 }
 
 LD39.TrainRideScreen.prototype.initializeKeyboard = function() {

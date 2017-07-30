@@ -191,8 +191,8 @@ LD39.BaseLevel.prototype.createPhysicsWorld = function() {
 
 LD39.BaseLevel.prototype.createEntities = function() {
   this.locomotiveEntity = new LD39.LocomotiveEntity();
-  this.locomotiveEntity.setPosition(0, -20);
-  this.locomotiveEntity.setPhysicsPosition(0, -20);
+  this.locomotiveEntity.setPosition(0, -21);
+  this.locomotiveEntity.setPhysicsPosition(0, -21);
   this.locomotiveEntity.setStatic(true);
 
   Matter.World.add(this.physicsEngine.world, [this.locomotiveEntity.physicsBody]);

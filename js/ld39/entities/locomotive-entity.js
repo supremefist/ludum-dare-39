@@ -208,12 +208,12 @@ LD39.LocomotiveEntity.prototype.feedCoal = function() {
   var burningCoalIncrement = 0.25;
 
   if (this.currentParameters['coal'] < coalConsumption) {
-    console.log("Not enough coal");
+    // console.log("Not enough coal");
     return;
   }
 
   if (this.currentParameters['burningCoal'] + burningCoalIncrement > 1.0) {
-    console.log("No burning space");
+    // console.log("No burning space");
     return;
   }
 
