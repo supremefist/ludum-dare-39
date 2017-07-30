@@ -132,7 +132,7 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
     var steamConsumptionAmount = delta / fullSteamUseDuration;
 
     var sliderConstant = 0.2;
-    var torqueConstant = 1.5;
+    var torqueConstant = 3;
     var finalSteamConsumption = 0;
 
     if (throttleValue > idleValue) {

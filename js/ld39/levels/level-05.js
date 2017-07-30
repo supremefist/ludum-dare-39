@@ -1,21 +1,27 @@
 var LD39 = LD39 || {};
 
-LD39.Level01 = function(stage) {
+LD39.Level05 = function(stage) {
   LD39.BaseLevel.call(this, stage);
 
-  this.levelTitle = "Level 1";
+  this.levelTitle = "Level 5";
 }
 
-LD39.Level01.prototype = Object.create(LD39.BaseLevel.prototype);
-LD39.Level01.prototype.constructor = LD39.Level01;
+LD39.Level05.prototype = Object.create(LD39.BaseLevel.prototype);
+LD39.Level05.prototype.constructor = LD39.Level05;
 
-LD39.Level01.prototype.createTrack = function() {
+LD39.Level05.prototype.createTrack = function() {
   LD39.BaseLevel.prototype.createTrack.call(this);
 
   this.track = new LD39.TrainTrack();
 
-  this.track.addTrackPoint(400, 50, "ground", null);
-  this.track.addTrackPoint(400, -50, "ground", null);
+  this.track.addTrackPoint(800, 200, "ground", null);
+  this.track.addTrackPoint(1600, 100, "ground", null);
+  this.track.addTrackPoint(800, -50, "ground", null);
+
+  this.track.addTrackPoint(0, 400, "ground", null);
+  this.track.addTrackPoint(400, 0, "hole", null);
+  this.track.addTrackPoint(0, -400, "ground", null);
+
   // this.track.addTrackPoint(800, 120, "ground", null);
   // this.track.addTrackPoint(1300, 170, "ground", null);
   // this.track.addTrackPoint(2000, 250, "ground", null);

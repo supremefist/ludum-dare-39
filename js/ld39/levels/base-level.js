@@ -1,12 +1,15 @@
 var LD39 = LD39 || {};
 
 LD39.BaseLevel = function(stage) {
+  this.levelTitle = "Unknown";
+  this.titleText = null;
+
   this.stage = stage;
   this.worldStage = new PIXI.Container();
   this.interfaceStage = new PIXI.Container();
   this.track = null;
   this.locomotiveEntity = null;
-  this.idleDuration = 1000;
+  this.idleDuration = 2000;
 
   this.throttleBarEntity = null;
   this.coalBarEntity = null;
@@ -24,7 +27,17 @@ LD39.BaseLevel = function(stage) {
 }
 
 LD39.BaseLevel.prototype.update = function(delta) {
-  Matter.Engine.update(this.physicsEngine, delta);
+  if (this.idleDuration < 0) {
+    if (this.titleText != null) {
+      this.interfaceStage.removeChild(this.titleText.sprite);
+      this.titleText = null;
+    }
+    Matter.Engine.update(this.physicsEngine, delta);
+  } else if (this.titleText == null) {
+    this.titleText = new LD39.TextEntity(this.levelTitle, 32, 0x000000);
+    this.titleText.setPosition(this.titleText.getHorizontalCenter(800), 300);
+    this.interfaceStage.addChild(this.titleText.sprite);
+  }
 
   this.locomotiveEntity.update(delta);
 
@@ -45,12 +58,8 @@ LD39.BaseLevel.prototype.update = function(delta) {
 
   this.locomotiveEntity.setThrottle(throttle);
 
-  if (this.idleDuration > 0) {
+  if (this.idleDuration >= 0) {
     this.idleDuration -= delta;
-
-    if (this.idleDuration < 0) {
-      this.startLevel();
-    }
   }
 
   this.updateCurrentTrackSegment();
@@ -60,35 +69,36 @@ LD39.BaseLevel.prototype.update = function(delta) {
 
 LD39.BaseLevel.prototype.updateIndicators = function() {
   var changes = this.locomotiveEntity.currentParameters.changes;
-  
-  if ("coal" in changes) {
+  var minChange = 0.01;
+
+  if (("coal" in changes) && (Math.abs(changes.coal) > minChange))  {
     if (changes.coal > 0) {
       this.coalBarEntity.indicateUp();
     } else {
       this.coalBarEntity.indicateDown();
     }
 
-    delete changes['coal'];
+    changes['coal'] = 0;
   }
 
-  if ("burningCoal" in changes) {
+  if (("burningCoal" in changes) && (Math.abs(changes.burningCoal) > minChange)) {
     if (changes.burningCoal > 0) {
       this.burningCoalBarEntity.indicateUp();
     } else {
       this.burningCoalBarEntity.indicateDown();
     }
 
-    delete changes['burningCoal'];
+    changes['burningCoal'] = 0;
   }
 
-  if ("steam" in changes) {
+  if (("steam" in changes) && (Math.abs(changes.steam) > minChange)) {
     if (changes.steam > 0) {
       this.steamBarEntity.indicateUp();
     } else {
       this.steamBarEntity.indicateDown();
     }
 
-    delete changes['steam'];
+    changes['steam'] = 0;
   }
 
 }
@@ -133,11 +143,6 @@ LD39.BaseLevel.prototype.updateCurrentTrackSegment = function() {
   }
 }
 
-LD39.BaseLevel.prototype.startLevel = function() {
-  // this.locomotiveEntity.setPhysicsPosition(0, -22);
-  this.locomotiveEntity.setStatic(false);
-}
-
 LD39.BaseLevel.prototype.createGround = function() {
   var padSprites = this.track.getTrackPhysicsObjects(true);
   for (var index = 0; index < padSprites.length; index++) {
@@ -148,7 +153,9 @@ LD39.BaseLevel.prototype.createGround = function() {
   for (var index = 1; index < levelPoints.length; index++) {
     var previousPoint = levelPoints[index - 1];
     var currentPoint = levelPoints[index];
-    this.addVisibleGround(previousPoint, currentPoint);
+    if (currentPoint.type == 'ground') {
+      this.addVisibleGround(previousPoint, currentPoint);
+    }
   }
 }
 
@@ -302,15 +309,24 @@ LD39.BaseLevel.prototype.createEntities = function() {
   this.locomotiveEntity.setPosition(0, -21);
   this.locomotiveEntity.setPhysicsPosition(0, -21);
 
-  this.locomotiveEntity.setStatic(true);
-
   Matter.World.add(this.physicsEngine.world, [this.locomotiveEntity.physicsBody]);
 
   this.locomotiveEntity.addToStage(this.worldStage);
 }
 
 LD39.BaseLevel.prototype.getPlayerState = function() {
+  if (this.idleDuration > 0) {
+    return {
+      state: "busy",
+      reason: "Healthy."
+    }
+  }
+
   var trackSegmentCount = this.track.points.length;
+  var currentSegments = this.track.getSegmentsAtIndex(this.currentTrackSegmentIndex);
+  var currentLocomotiveY = this.locomotiveEntity.getPosition().y;
+  var minAllowableY = Math.max(currentSegments.start.y, currentSegments.end.y);
+
   if (this.locomotiveEntity.currentParameters.steam > 1.5) {
     return {
       state: "dead",
@@ -320,6 +336,11 @@ LD39.BaseLevel.prototype.getPlayerState = function() {
     return {
       state: "dead",
       reason: "Killed by catastrophic collision."
+    }
+  } else if (currentLocomotiveY > minAllowableY) {
+    return {
+      state: "dead",
+      reason: "Fell to your death."
     }
   } else if ((this.currentTrackSegmentIndex == trackSegmentCount - 4) && (this.locomotiveEntity.isStationary())) {
     return {

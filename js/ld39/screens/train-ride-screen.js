@@ -14,7 +14,7 @@ LD39.TrainRideScreen.prototype = Object.create(LD39.Screen.prototype);
 LD39.TrainRideScreen.prototype.constructor = LD39.TrainRideScreen;
 
 LD39.TrainRideScreen.prototype.createLevel = function() {
-  this.level = new LD39.Level01(this.stage);
+  this.level = new LD39.Level05(this.stage);
 }
 
 LD39.TrainRideScreen.prototype.render = function(renderer) {
