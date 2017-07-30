@@ -69,7 +69,7 @@ LD39.BaseLevel.prototype.updateHelpMessage = function() {
   } else if (steamAmount < 0.05) {
     this.helperTextEntity.setText("Low steam!");
   } else if (burningCoalAmount > 0.95) {
-    this.helperTextEntity.setText("Burn chamber full!");
+    this.helperTextEntity.setText("Combustion chamber full!");
   } else {
     this.helperTextEntity.setText("");
   }
@@ -229,12 +229,21 @@ LD39.BaseLevel.prototype.createEntities = function() {
 }
 
 LD39.BaseLevel.prototype.getPlayerState = function() {
-  if (this.currentTrackSegmentIndex < 0) {
-    return "dead";
-  } else if (this.currentTrackSegmentIndex >= this.track.points.length - 1) {
-    return "dead";
+  if (this.locomotiveEntity.currentParameters.steam > 1.5) {
+    return {
+      state: "dead",
+      reason: "Killed by steam chamber explosion."
+    }
+  } else if ((this.currentTrackSegmentIndex < 0) || (this.currentTrackSegmentIndex >= this.track.points.length - 1)) {
+    return {
+      state: "dead",
+      reason: "Killed by catastrophic collision."
+    }
   }
-  return "alive";
+  return {
+    state: "alive",
+    reason: "Healthy."
+  }
 }
 
 LD39.BaseLevel.prototype.createTrack = function() {

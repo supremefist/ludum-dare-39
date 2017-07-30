@@ -27,12 +27,13 @@ LD39.TrainRideScreen.prototype.render = function(renderer) {
 LD39.TrainRideScreen.prototype.update = function(delta) {
   LD39.Screen.prototype.update.call(this, delta);
 
-  if (this.level.getPlayerState() == 'dead') {
+  var playerState = this.level.getPlayerState();
+  if (playerState.state == 'dead') {
     if (this.overlay != null) {
       return;
     }
 
-    LD39.setCurrentScreen(new LD39.DeathScreen());
+    LD39.setCurrentScreen(new LD39.DeathScreen(playerState));
 
   } else {
     LD39.Screen.prototype.update.call(this, delta);
