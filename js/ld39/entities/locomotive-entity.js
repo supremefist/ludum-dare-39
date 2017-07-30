@@ -17,7 +17,11 @@ LD39.LocomotiveEntity = function() {
     "steam": 0.0,
     "throttle": 0.3,
     "effectiveThrottle": 0.3,
-    "changes": []
+    "changes": {
+      'coal': 0,
+      'burningCoal': 0,
+      'steam': 0
+    }
   };
 
   this.braking = false;
@@ -91,12 +95,12 @@ LD39.LocomotiveEntity.prototype.update = function(delta) {
 }
 
 LD39.LocomotiveEntity.prototype.processResources = function(delta) {
-  var baseDuration = 10000;
+  var baseDuration = 50000;
 
   var burnToSteamRatio = 0.1;
   var steamToEngineRatio = 2;
 
-  var fullBurningDuration = baseDuration * 15;
+  var fullBurningDuration = baseDuration;
   var fullSteamGenerationDuration = fullBurningDuration * burnToSteamRatio;
   var fullSteamUseDuration = fullSteamGenerationDuration * steamToEngineRatio;
 
@@ -105,12 +109,12 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
 
   if (this.currentParameters['burningCoal'] >= burnAmount) {
     this.currentParameters['burningCoal'] -= burnAmount;
-    this.currentParameters.changes['burningCoal'] = -burnAmount;
+    this.currentParameters.changes['burningCoal'] -= burnAmount;
 
     var generatedSteamAmount = delta / fullSteamGenerationDuration;
     if (generatedSteamAmount > 0) {
       this.currentParameters['steam'] += generatedSteamAmount;
-      this.currentParameters.changes['steam'] = generatedSteamAmount;
+      this.currentParameters.changes['steam'] += generatedSteamAmount;
     }
     // console.log("Generated " + generatedSteamAmount.toFixed(10) + " steam!");
     // console.log(this.currentParameters['steam']);
@@ -132,7 +136,7 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
     var steamConsumptionAmount = delta / fullSteamUseDuration;
 
     var sliderConstant = 0.2;
-    var torqueConstant = 3;
+    var torqueConstant = 2;
     var finalSteamConsumption = 0;
 
     if (throttleValue > idleValue) {
@@ -143,9 +147,9 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
       movementMultiplier = Math.round(Math.min(movementMultiplier, maxMovementMultiplier));
 
       // console.log("Final forward multiplier: " + movementMultiplier);
-      finalSteamConsumption = steamConsumptionAmount * movementMultiplier;
-
       effectiveThrottle = (movementMultiplier * sliderConstant) + idleValue;
+
+      finalSteamConsumption = steamConsumptionAmount * movementMultiplier;
 
       finalTorque = throttleMultiplier * movementMultiplier * sliderConstant * torqueConstant;
     } else if (throttleValue < idleValue) {
@@ -160,19 +164,17 @@ LD39.LocomotiveEntity.prototype.processResources = function(delta) {
       finalTorque = -1.0 * throttleMultiplier * movementMultiplier * sliderConstant * torqueConstant;
     }
 
-    if (finalSteamConsumption > 0) {
-      this.currentParameters['steam'] -= finalSteamConsumption;
-      if (this.currentParameters.changes.steam != undefined) {
-        this.currentParameters.changes['steam'] -= finalSteamConsumption;
-      } else {
-        this.currentParameters.changes['steam'] = -finalSteamConsumption;
-      }
+    if (movementMultiplier == 1) {
+      finalSteamConsumption *= 0.7;
+    } else if (movementMultiplier == 2) {
+      finalSteamConsumption *= 1.1;
+    } else if (movementMultiplier == 3) {
+      finalSteamConsumption *= 1.5;
     }
 
-    if ("steam" in this.currentParameters.changes) {
-      if (Math.abs(this.currentParameters.changes.steam) < 0.00001) {
-        delete this.currentParameters.changes.steam;
-      }
+    if (finalSteamConsumption > 0) {
+      this.currentParameters['steam'] -= finalSteamConsumption;
+      this.currentParameters.changes['steam'] -= finalSteamConsumption;
     }
   }
 

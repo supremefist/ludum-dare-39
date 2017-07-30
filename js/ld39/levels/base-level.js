@@ -34,9 +34,9 @@ LD39.BaseLevel.prototype.update = function(delta) {
     }
     Matter.Engine.update(this.physicsEngine, delta);
   } else if (this.titleText == null) {
-    this.titleText = new LD39.TextEntity(this.levelTitle, 32, 0x000000);
-    this.titleText.setPosition(this.titleText.getHorizontalCenter(800), 300);
-    this.interfaceStage.addChild(this.titleText.sprite);
+    // this.titleText = new LD39.TextEntity(this.levelTitle, 32, 0x000000);
+    // this.titleText.setPosition(this.titleText.getHorizontalCenter(800), 300);
+    // this.interfaceStage.addChild(this.titleText.sprite);
   }
 
   this.locomotiveEntity.update(delta);
@@ -71,7 +71,7 @@ LD39.BaseLevel.prototype.updateIndicators = function() {
   var changes = this.locomotiveEntity.currentParameters.changes;
   var minChange = 0.01;
 
-  if (("coal" in changes) && (Math.abs(changes.coal) > minChange))  {
+  if (Math.abs(changes.coal) > minChange)  {
     if (changes.coal > 0) {
       this.coalBarEntity.indicateUp();
     } else {
@@ -81,7 +81,7 @@ LD39.BaseLevel.prototype.updateIndicators = function() {
     changes['coal'] = 0;
   }
 
-  if (("burningCoal" in changes) && (Math.abs(changes.burningCoal) > minChange)) {
+  if (Math.abs(changes.burningCoal) > minChange) {
     if (changes.burningCoal > 0) {
       this.burningCoalBarEntity.indicateUp();
     } else {
@@ -91,7 +91,7 @@ LD39.BaseLevel.prototype.updateIndicators = function() {
     changes['burningCoal'] = 0;
   }
 
-  if (("steam" in changes) && (Math.abs(changes.steam) > minChange)) {
+  if (Math.abs(changes.steam) > minChange) {
     if (changes.steam > 0) {
       this.steamBarEntity.indicateUp();
     } else {
@@ -102,21 +102,33 @@ LD39.BaseLevel.prototype.updateIndicators = function() {
   }
 
 }
+
 LD39.BaseLevel.prototype.updateHelpMessage = function() {
   var coalAmount = this.locomotiveEntity.currentParameters.coal;
   var burningCoalAmount = this.locomotiveEntity.currentParameters.burningCoal;
   var steamAmount = this.locomotiveEntity.currentParameters.steam;
+  var throttling = this.locomotiveEntity.currentParameters.throttle > 0;
+  var inefficient = this.locomotiveEntity.currentParameters.throttle * 0.8 > this.locomotiveEntity.currentParameters.effectiveThrottle;
 
   if (steamAmount >= 1.0) {
     this.helperTextEntity.setText("Steam critical! (" + Math.round(steamAmount * 100) + "%)");
+    this.additionalHelperTextEntity.setText("Throttle forward to release steam!");
   } else if (steamAmount > 0.8) {
     this.helperTextEntity.setText("Steam too high!");
+    this.additionalHelperTextEntity.setText("Throttle forward to release steam!");
   } else if (steamAmount < 0.05) {
     this.helperTextEntity.setText("Low steam!");
+    if ((throttling) && (inefficient)) {
+      this.additionalHelperTextEntity.setText("Not at full power! Lower throttle to use less steam!");
+    } else if (burningCoalAmount < 0.2) {
+      this.additionalHelperTextEntity.setText("Press 'right' to shovel coal.");
+    }
   } else if (burningCoalAmount > 0.95) {
     this.helperTextEntity.setText("Combustion chamber full!");
+    this.additionalHelperTextEntity.setText("Wait for coal to burn before adding additional coal.");
   } else {
     this.helperTextEntity.setText("");
+    this.additionalHelperTextEntity.setText("");
   }
 }
 
@@ -164,19 +176,34 @@ LD39.BaseLevel.prototype.createBuildings = function() {
   for (var index = 0; index < buildingLocations.length; index++) {
     var buildingLocation = buildingLocations[index];
 
-    if (buildingLocation.type == 'station') {
+    var buildingX = 1;
+    var buildingY = 1;
+    if (buildingLocation.type != null) {
+      if (buildingLocation.type == 'station') {
+        buildingX = 1;
+        buildingY = 1;
+      } else if (buildingLocation.type == 'factory') {
+        buildingX = 131;
+        buildingY = 1;
+      } else if (buildingLocation.type == 'house') {
+        buildingX = 261;
+        buildingY = 1;
+      } else {
+        console.log("Invalid building type: " + buildingLocation.type);
+      }
+
       var texture = PIXI.loader.resources["graphics/buildings"].texture;
-      var stationTexture = new PIXI.Texture(
-        texture, new PIXI.Rectangle(1, 1, 128, 64));
-      var stationSprite = new PIXI.Sprite(stationTexture);
-      stationSprite.position.set(buildingLocation.x, buildingLocation.y - 64);
-      // stationSprite.position.set(32, -64);
-      stationSprite.anchor.set(0.5, 0.5);
-      stationSprite.scale.set(2.0, 2.0);
-      this.worldStage.addChild(stationSprite);
-    } else {
-      console.log("Invalid building type: " + buildingLocation.type);
+      var buildingTexture = new PIXI.Texture(
+        texture, new PIXI.Rectangle(buildingX, buildingY, 128, 64));
+      var buildingSprite = new PIXI.Sprite(buildingTexture);
+
+      buildingSprite.position.set(buildingLocation.x, buildingLocation.y - 64);
+      // buildingSprite.position.set(32, -64);
+      buildingSprite.anchor.set(0.5, 0.5);
+      buildingSprite.scale.set(2.0, 2.0);
+      this.worldStage.addChild(buildingSprite);
     }
+
 
   }
 
@@ -226,6 +253,10 @@ LD39.BaseLevel.prototype.createInterface = function() {
   this.helperTextEntity = new LD39.TextEntity("", 16, 0x000000);
   this.helperTextEntity.setPosition(interfaceX, interfaceY + 160);
   this.interfaceStage.addChild(this.helperTextEntity.sprite);
+
+  this.additionalHelperTextEntity = new LD39.TextEntity("", 12, 0x000000);
+  this.additionalHelperTextEntity.setPosition(interfaceX, interfaceY + 180);
+  this.interfaceStage.addChild(this.additionalHelperTextEntity.sprite);
 
   this.stage.addChild(this.interfaceStage);
 }
