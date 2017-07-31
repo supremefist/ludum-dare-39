@@ -40,6 +40,9 @@ LD39.loadProgressHandler = function(loader, resource) {
 
 LD39.loadingCompleted = function(loader, resources) {
   // LD39.setCurrentScreen(new LD39.TrainRideScreen());
+  PIXI.loader.resources['music/main'].sound.play({
+    loop: true
+  });
   LD39.setCurrentScreen(new LD39.MenuScreen());
 }
 
@@ -65,7 +68,8 @@ LD39.loadResources = function() {
     .add('sounds/burn_a', 'resources/sounds/burn_a.wav')
     .add('sounds/burn_b', 'resources/sounds/burn_b.wav')
     .add('sounds/burn_c', 'resources/sounds/burn_c.wav')
-    // .add('music/main', 'resources/music/the_jaunt.mp3')
+
+    .add('music/main', 'resources/music/running_out_of_steam.mp3')
     .load(LD39.loadingCompleted);
 
   PIXI.loader.on("progress", LD39.loadProgressHandler);
